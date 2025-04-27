@@ -1,0 +1,299 @@
+<html>
+
+<head>
+    <style>
+        .screen {
+            width: 100px;
+            height: 60px;
+            width: 60px;
+        }
+
+        .matrix {
+            width: 33px;
+            height: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 2px solid rgb(140 140 140);
+            font-family: sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        caption {
+            caption-side: bottom;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        thead,
+        tfoot {
+            background-color: rgb(228 240 245);
+        }
+
+        th,
+        td {
+            border: 1px solid rgb(160 160 160);
+            /* padding: 8px 10px; */
+            /* min-height: 30px; */
+        }
+        
+
+        td:last-of-type {
+            text-align: center;
+        }
+
+        tbody>tr:nth-of-type(even) {
+            background-color: rgb(237 238 242);
+        }
+
+        tfoot th {
+            text-align: right;
+        }
+
+        tfoot td {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body v-scope v-once>
+    <table>
+        <tr>
+            <td><input id="screen1_1" class="screen" type="checkbox"></td>
+            <td><input id="screen1_2" class="screen" type="checkbox"></td>
+            <td><input id="screen1_3" class="screen" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td><input id="screen2_1" class="screen" type="checkbox"></td>
+            <td><input id="screen2_2" class="screen" type="checkbox"></td>
+            <td><input id="screen2_3" class="screen" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td><input id="screen3_1" class="screen" type="checkbox"></td>
+            <td><input id="screen3_2" class="screen" type="checkbox"></td>
+            <td><input id="screen3_3" class="screen" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td><input id="screen4_1" class="screen" type="checkbox"></td>
+            <td><input id="screen4_2" class="screen" type="checkbox"></td>
+            <td><input id="screen4_3" class="screen" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td><input id="screen5_1" class="screen" type="checkbox"></td>
+            <td><input id="screen5_2" class="screen" type="checkbox"></td>
+            <td><input id="screen5_3" class="screen" type="checkbox"></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td id="computer_a"></td><td id="computer_b"></td><td id="computer_c"></td><td id="computer_d"></td><td id="computer_e"></td><td id="computer_f"></td><td id="computer_g"></td>
+        </tr>
+    </table>
+
+    <table class="matrix_table">
+        <tr v-for="(id,index) in layer0IdMatrix">
+            <td v-if="index == 0" :colspan="maxColumnCount" :rowspan="maxRowCount"></td>
+            <td><input :id="id" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+        </tr>
+        <tr v-for="(row,index) in weight0_1IdMatrix">
+            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="'layer1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+        </tr>
+
+        <tr v-for="(row,index) in weight1_2IdMatrix">
+            <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight1_2IdMatrix.length"></td>
+            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="'layer2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+        </tr>
+
+        <tr v-for="(row,index) in weight2_3IdMatrix">
+            <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
+            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="'layer3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+        </tr>
+
+    </table>
+</body>
+<script src="petite-vue.iife.js"></script>
+<script>
+
+const layer0IdMatrix = [
+        ["layer0_0_0"],
+        ["layer0_1_0"],
+        ["layer0_2_0"],
+        ["layer0_3_0"],
+        ["layer0_4_0"],
+        ["layer0_5_0"],
+        ["layer0_6_0"],
+        ["layer0_7_0"],
+        ["layer0_8_0"],
+        ["layer0_9_0"],
+        ["layer0_10_0"],
+        ["layer0_11_0"],
+        ["layer0_12_0"],
+        ["layer0_13_0"],
+        ["layer0_14_0"]
+    ]
+
+    const weight0_1IdMatrix = [
+        ["weight0_1_0_0", "weight0_1_0_1", "weight0_1_0_2", "weight0_1_0_3", "weight0_1_0_4", "weight0_1_0_5", "weight0_1_0_6", "weight0_1_0_7", "weight0_1_0_8", "weight0_1_0_9", "weight0_1_0_10", "weight0_1_0_11", "weight0_1_0_12", "weight0_1_0_13", "weight0_1_0_14"],
+        ["weight0_1_1_0", "weight0_1_1_1", "weight0_1_1_2", "weight0_1_1_3", "weight0_1_1_4", "weight0_1_1_5", "weight0_1_1_6", "weight0_1_1_7", "weight0_1_1_8", "weight0_1_1_9", "weight0_1_1_10", "weight0_1_1_11", "weight0_1_1_12", "weight0_1_1_13", "weight0_1_1_14"],
+        ["weight0_1_2_0", "weight0_1_2_1", "weight0_1_2_2", "weight0_1_2_3", "weight0_1_2_4", "weight0_1_2_5", "weight0_1_2_6", "weight0_1_2_7", "weight0_1_2_8", "weight0_1_2_9", "weight0_1_2_10", "weight0_1_2_11", "weight0_1_2_12", "weight0_1_2_13", "weight0_1_2_14"],
+        ["weight0_1_3_0", "weight0_1_3_1", "weight0_1_3_2", "weight0_1_3_3", "weight0_1_3_4", "weight0_1_3_5", "weight0_1_3_6", "weight0_1_3_7", "weight0_1_3_8", "weight0_1_3_9", "weight0_1_3_10", "weight0_1_3_11", "weight0_1_3_12", "weight0_1_3_13", "weight0_1_3_14"]
+    ]
+
+
+    const layer1IdMatrix = [
+        ["layer1_0_0"],
+        ["layer1_1_0"],
+        ["layer1_2_0"],
+        ["layer1_3_0"]
+    ]
+
+    const weight1_2IdMatrix = [
+        ["weight1_2_0_0", "weight1_2_0_1", "weight1_2_0_2", "weight1_2_0_3"],
+        ["weight1_2_1_0", "weight1_2_1_1", "weight1_2_1_2", "weight1_2_1_3"],
+        ["weight1_2_2_0", "weight1_2_2_1", "weight1_2_2_2", "weight1_2_2_3"],
+        ["weight1_2_3_0", "weight1_2_3_1", "weight1_2_3_2", "weight1_2_3_3"]
+    ]
+
+    const layer2IdMatrix = [
+        ["layer2_0_0"],
+        ["layer2_1_0"],
+        ["layer2_2_0"],
+        ["layer2_3_0"]
+    ]
+
+    const weight2_3IdMatrix = [
+        ["weight2_3_0_0", "weight2_3_0_1", "weight2_3_0_2", "weight2_3_0_3"],
+        ["weight2_3_1_0", "weight2_3_1_1", "weight2_3_1_2", "weight2_3_1_3"],
+        ["weight2_3_2_0", "weight2_3_2_1", "weight2_3_2_2", "weight2_3_2_3"],
+        ["weight2_3_3_0", "weight2_3_3_1", "weight2_3_3_2", "weight2_3_3_3"],
+        ["weight2_3_4_0", "weight2_3_4_1", "weight2_3_4_2", "weight2_3_4_3"],
+        ["weight2_3_5_0", "weight2_3_5_1", "weight2_3_5_2", "weight2_3_5_3"],
+        ["weight2_3_6_0", "weight2_3_6_1", "weight2_3_6_2", "weight2_3_6_3"],
+        ["weight2_3_7_0", "weight2_3_7_1", "weight2_3_7_2", "weight2_3_7_3"],
+        ["weight2_3_8_0", "weight2_3_8_1", "weight2_3_8_2", "weight2_3_8_3"],
+        ["weight2_3_9_0", "weight2_3_9_1", "weight2_3_9_2", "weight2_3_9_3"]
+    ]
+
+    const layer3IdMatrix = [
+        ["layer3_0_0"],
+        ["layer3_1_0"],
+        ["layer3_2_0"],
+        ["layer3_3_0"],
+        ["layer3_4_0"],
+        ["layer3_5_0"],
+        ["layer3_6_0"],
+        ["layer3_7_0"],
+        ["layer3_8_0"],
+        ["layer3_9_0"]
+    ]
+    const maxColumnCount = Math.max(
+        weight0_1IdMatrix[0].length, weight1_2IdMatrix[0].length, weight2_3IdMatrix[0].length
+    );
+    const maxRowCount = Math.max(
+        layer0IdMatrix.length, layer1IdMatrix.length, layer2IdMatrix.length, layer3IdMatrix.length
+    );
+
+    function getValue(id) {
+        console.log("getValue id", id)
+        if (id == null) {
+            debugger;
+        }
+        return parseFloat(document.getElementById(id).value);
+    }
+    function setValue(id, value) {
+        console.log("setValue id", id)
+        return document.getElementById(id).value = value;
+    }
+
+    function setComputer(a,b,c,d,e,f,g){
+        document.getElementById("computer_a").innerHTML = a;
+        document.getElementById("computer_b").innerHTML = b;
+        document.getElementById("computer_c").innerHTML = c;
+        document.getElementById("computer_d").innerHTML = d;
+        document.getElementById("computer_e").innerHTML = e;
+        document.getElementById("computer_f").innerHTML = f;
+        document.getElementById("computer_g").innerHTML = g;
+    }
+
+    async function playMatrixCrossStepAnimation(matrixIdA,matrixIdB,resultMatrixId){
+        const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
+        setComputer(getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result);
+        await sleep(100);
+    }
+    
+    function clearComputer(){
+        try{
+            setComputer("","","","","","","");
+        }catch (e){
+            console.warn(e);
+        }
+    }
+    
+    /** 矩阵乘法 */
+    async function matrixCross(matrixIdsA, matrixIdsB, resultMatrixIds) {
+        for (let i = 0; i < matrixIdsA.length; i++) {
+            // 左取行
+            const matrixIdsARow = matrixIdsA[i];
+            for(let j=0;j< matrixIdsB[0].length;j++){
+                // 右取列
+                const matrixIdsBColumn = getColumn(matrixIdsB, j);
+                for(let m = 0; m < matrixIdsARow.length; m++){
+                    const matrixIdA = matrixIdsARow[m];
+                    const matrixIdB = matrixIdsBColumn[m];
+                    const resultMatrixId = resultMatrixIds[i][j];
+                    await playMatrixCrossStepAnimation(matrixIdA, matrixIdB, resultMatrixId);
+                    const newValue = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
+                    setValue(resultMatrixId, newValue);
+                }
+            }
+        }
+    }
+
+    function getColumn(matrix, columnIndex) {
+        const result = [];
+        for(let i=0;i<matrix.length;i++){
+            const row = matrix[i];
+             result.push(row[columnIndex]);
+        }
+        return result;
+    }
+
+    async function start(){
+        await sleep(1000);
+        clearComputer();
+        await matrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
+        await matrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
+        await matrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+    }
+    
+    async function sleep(ms){
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    PetiteVue.createApp(
+        {
+            layer0IdMatrix : layer0IdMatrix,
+            weight0_1IdMatrix : weight0_1IdMatrix,
+            layer1IdMatrix : layer1IdMatrix,
+            weight1_2IdMatrix : weight1_2IdMatrix,
+            layer2IdMatrix : layer2IdMatrix,
+            weight2_3IdMatrix : weight2_3IdMatrix,
+            layer3IdMatrix : layer3IdMatrix,
+
+            maxColumnCount: maxColumnCount,
+            maxRowCount: maxRowCount,
+        }
+    ).mount()
+
+    start();
+
+    
+</script>
+
+</html>
