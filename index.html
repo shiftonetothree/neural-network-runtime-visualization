@@ -8,6 +8,14 @@
             width: 60px;
         }
 
+        .screen_table {
+            display: flex;
+        }
+
+        .matrix_table {
+            display: flex;
+        }
+
         .matrix {
             width: 33px;
             height: 15px;
@@ -59,31 +67,9 @@
 </head>
 
 <body v-scope v-once>
-    <table>
-        <tr>
-            <td><input id="screen1_1" class="screen" type="checkbox"></td>
-            <td><input id="screen1_2" class="screen" type="checkbox"></td>
-            <td><input id="screen1_3" class="screen" type="checkbox"></td>
-        </tr>
-        <tr>
-            <td><input id="screen2_1" class="screen" type="checkbox"></td>
-            <td><input id="screen2_2" class="screen" type="checkbox"></td>
-            <td><input id="screen2_3" class="screen" type="checkbox"></td>
-        </tr>
-        <tr>
-            <td><input id="screen3_1" class="screen" type="checkbox"></td>
-            <td><input id="screen3_2" class="screen" type="checkbox"></td>
-            <td><input id="screen3_3" class="screen" type="checkbox"></td>
-        </tr>
-        <tr>
-            <td><input id="screen4_1" class="screen" type="checkbox"></td>
-            <td><input id="screen4_2" class="screen" type="checkbox"></td>
-            <td><input id="screen4_3" class="screen" type="checkbox"></td>
-        </tr>
-        <tr>
-            <td><input id="screen5_1" class="screen" type="checkbox"></td>
-            <td><input id="screen5_2" class="screen" type="checkbox"></td>
-            <td><input id="screen5_3" class="screen" type="checkbox"></td>
+    <table class="screen_table">
+        <tr v-for="(_,row) in 5">
+            <td v-for="(_,column) in 3"><input :id="'screen_'+row+'_'+column" class="screen" type="checkbox"></td>
         </tr>
     </table>
 
@@ -119,6 +105,109 @@
 </body>
 <script src="petite-vue.iife.js"></script>
 <script>
+
+const dataSet = [
+    {
+        data: [
+            [1,1,1],
+            [1,0,1],
+            [1,0,1],
+            [1,0,1],
+            [1,1,1],
+        ],
+        lable: '0'
+    },
+    {
+        data: [
+            [0,1,0],
+            [1,1,0],
+            [0,1,0],
+            [0,1,0],
+            [1,1,1],
+        ],
+        lable: '1'
+    },
+    {
+        data: [
+            [1,1,1],
+            [0,0,1],
+            [1,1,1],
+            [1,0,0],
+            [1,1,1],
+        ],
+        lable: '2'
+    },
+    {
+        data: [
+            [1,1,1],
+            [0,0,1],
+            [1,1,1],
+            [0,0,1],
+            [1,1,1],
+        ],
+        lable: '3'
+    },
+    {
+        data: [
+            [1,0,1],
+            [1,0,1],
+            [1,1,1],
+            [0,0,1],
+            [0,0,1],
+        ],
+        lable: '4'
+    },
+    {
+        data: [
+            [1,1,1],
+            [1,0,0],
+            [1,1,1],
+            [0,0,1],
+            [1,1,1],
+        ],
+        lable: '5'
+    },
+    {
+        data: [
+            [1,1,1],
+            [1,0,0],
+            [1,1,1],
+            [1,0,1],
+            [1,1,1],
+        ],
+        lable: '6'
+    },
+    {
+        data: [
+            [1,1,1],
+            [0,0,1],
+            [0,0,1],
+            [0,0,1],
+            [0,0,1],
+        ],
+        lable: '7'
+    },
+    {
+        data: [
+            [1,1,1],
+            [1,0,1],
+            [1,1,1],
+            [1,0,1],
+            [1,1,1],
+        ],
+        lable: '8'
+    },
+    {
+        data: [
+            [1,1,1],
+            [1,0,1],
+            [1,1,1],
+            [0,0,1],
+            [1,1,1],
+        ],
+        lable: '9'
+    }
+];
 
 const layer0IdMatrix = [
         ["layer0_0_0"],
@@ -204,11 +293,23 @@ const layer0IdMatrix = [
         if (id == null) {
             debugger;
         }
-        return parseFloat(document.getElementById(id).value);
+        const element = document.getElementById(id);
+        if(element.type == "checkbox"){
+            return parseFloat(element.checked);
+        }else{
+            return parseFloat(element.value);
+        }
+        
     }
     function setValue(id, value) {
         console.log("setValue id", id)
-        return document.getElementById(id).value = value;
+        const element = document.getElementById(id);
+        if(element.type == "checkbox"){
+            return element.checked = value;
+        }else{
+            return element.value = value;
+        }
+        
     }
 
     function setComputer(a,b,c,d,e,f,g){
@@ -264,12 +365,35 @@ const layer0IdMatrix = [
         return result;
     }
 
+    function getDataSet(){
+        // 从data.js中获取数据集
+        return dataSet;
+    }
+
+    function putDataToScreen(data,label){
+        for(let i = 0; i < data.length; i++){
+            const row = data[i];
+            for(let j = 0; j< row.length; j++){
+                const value = row[j];
+                const id = "screen_" + i + "_" + j;
+                setValue(id, Boolean(value));
+            }
+
+        }
+    }
+
     async function start(){
         await sleep(1000);
-        clearComputer();
-        await matrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
-        await matrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
-        await matrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+        const dataSet = getDataSet();
+        for(let i = 0; i < dataSet.length; i++){
+            const item = dataSet[i];
+            clearComputer();
+            putDataToScreen(item.data, item.label);
+            await matrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
+            await matrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
+            await matrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+        }
+        
     }
     
     async function sleep(ms){
