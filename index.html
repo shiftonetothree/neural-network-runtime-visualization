@@ -676,7 +676,8 @@ const layer0IdMatrix = [
         //     setValue(weight0_1IdMatrix[0][0],getValue(weight0_1IdMatrix[0][0]) + 1);
         // }
         // console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
-        for(let t = 0; t < 1000; t++){
+        // 训练
+        for(let t = 0; t < 2000; t++){
             for(let i = 0; i < dataSet.length; i++){
                 const item = dataSet[i];
                 clearComputer1();
@@ -697,7 +698,24 @@ const layer0IdMatrix = [
             // await sleep(14);
             if(t % 10 == 0){
                 console.log("第" + t + "次训练完成", new Date());
-                await sleep(1000);
+                await sleep(100);
+            }
+        }
+        // 推理
+        for(let t = 0; ; t++){
+            for(let i = 0; i < dataSet.length; i++){
+                const item = dataSet[i];
+                clearComputer1();
+                putDataToScreen(item.data, item.label);
+                // 正向传播
+                putTrainDataToMatrix(item.data, item.labelMatrix);
+                await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
+                await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
+                await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+                lightUpMaxValue(layer3IdMatrix);
+                lightUpMaxValue(labelIdMatrix);
+                await sleep(1000)
+                console.log("第" + (t * 10 + i) + "次测试完成", new Date());
             }
         }
     }
