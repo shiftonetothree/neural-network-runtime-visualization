@@ -75,7 +75,13 @@
 
     <table>
         <tr>
-            <td id="computer_a"></td><td id="computer_b"></td><td id="computer_c"></td><td id="computer_d"></td><td id="computer_e"></td><td id="computer_f"></td><td id="computer_g"></td>
+            <td id="computer1_a"></td><td id="computer1_b"></td><td id="computer1_c"></td><td id="computer1_d"></td><td id="computer1_e"></td><td id="computer1_f"></td><td id="computer1_g"></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td id="computer2_a"></td><td id="computer2_b"></td><td id="computer2_c"></td><td id="computer2_d"></td><td id="computer2_e"></td><td id="computer2_f"></td><td id="computer2_g"></td>
         </tr>
     </table>
 
@@ -312,25 +318,49 @@ const layer0IdMatrix = [
         
     }
 
-    function setComputer(a,b,c,d,e,f,g){
-        document.getElementById("computer_a").innerHTML = a;
-        document.getElementById("computer_b").innerHTML = b;
-        document.getElementById("computer_c").innerHTML = c;
-        document.getElementById("computer_d").innerHTML = d;
-        document.getElementById("computer_e").innerHTML = e;
-        document.getElementById("computer_f").innerHTML = f;
-        document.getElementById("computer_g").innerHTML = g;
+    function setComputer1(a,b,c,d,e,f,g){
+        document.getElementById("computer1_a").innerHTML = a ? a : "";
+        document.getElementById("computer1_b").innerHTML = b ? b : "";
+        document.getElementById("computer1_c").innerHTML = c ? c : "";
+        document.getElementById("computer1_d").innerHTML = d ? d : "";
+        document.getElementById("computer1_e").innerHTML = e ? e : "";
+        document.getElementById("computer1_f").innerHTML = f ? f : "";
+        document.getElementById("computer1_g").innerHTML = g ? g : "";
+    }
+
+    function setComputer2(a,b,c,d,e,f,g){
+        document.getElementById("computer2_a").innerHTML = a ? a : "";
+        document.getElementById("computer2_b").innerHTML = b ? b : "";
+        document.getElementById("computer2_c").innerHTML = c ? c : "";
+        document.getElementById("computer2_d").innerHTML = d ? d : "";
+        document.getElementById("computer2_e").innerHTML = e ? e : "";
+        document.getElementById("computer2_f").innerHTML = f ? f : "";
+        document.getElementById("computer2_g").innerHTML = g ? g : "";
     }
 
     async function playMatrixCrossStepAnimation(matrixIdA,matrixIdB,resultMatrixId){
         const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
-        setComputer(getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result);
-        await sleep(100);
+        setComputer1(getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result);
+        await sleep(14);
+    }
+
+    async function playActivationFunction‌Animation(resultMatrixId){
+        const result = 1 / (1 + Math.exp(getValue(resultMatrixId)))
+        setComputer2("1 / (1 + Math.exp(",getValue(resultMatrixId),")","=",result);
+        await sleep(14);
     }
     
-    function clearComputer(){
+    function clearComputer1(){
         try{
-            setComputer("","","","","","","");
+            setComputer1("","","","","","","");
+        }catch (e){
+            console.warn(e);
+        }
+    }
+
+    function clearComputer2(){
+        try{
+            setComputer2("","","","","","","");
         }catch (e){
             console.warn(e);
         }
@@ -351,6 +381,9 @@ const layer0IdMatrix = [
                     await playMatrixCrossStepAnimation(matrixIdA, matrixIdB, resultMatrixId);
                     const newValue = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
                     setValue(resultMatrixId, newValue);
+                    await playActivationFunction‌Animation(resultMatrixId);
+                    const newValueAfterActivation = 1 / (1 + Math.exp(-newValue))
+                    setValue(resultMatrixId, newValueAfterActivation);
                 }
             }
         }
@@ -382,13 +415,28 @@ const layer0IdMatrix = [
         }
     }
 
+    function putDataToLayer0(data){
+        let m = 0;
+        for(let i = 0; i < data.length; i++){
+            const row = data[i];
+            for(let j = 0; j< row.length; j++){
+                const value = row[j];
+                const id = "layer0_" + m + "_0";
+                setValue(id, value);
+                m++;
+            }
+
+        }
+    }
+
     async function start(){
         await sleep(1000);
         const dataSet = getDataSet();
         for(let i = 0; i < dataSet.length; i++){
             const item = dataSet[i];
-            clearComputer();
+            clearComputer1();
             putDataToScreen(item.data, item.label);
+            putDataToLayer0(item.data);
             await matrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
             await matrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
             await matrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
