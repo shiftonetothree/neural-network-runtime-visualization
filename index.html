@@ -88,24 +88,34 @@
     <table class="matrix_table">
         <tr v-for="(id,index) in layer0IdMatrix">
             <td v-if="index == 0" :colspan="maxColumnCount" :rowspan="maxRowCount"></td>
+            <td>|-|</td>
             <td><input :id="id" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
         </tr>
+        <tr><td>--</td></tr>
         <tr v-for="(row,index) in weight0_1IdMatrix">
             <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td>|-|</td>
             <td><input :id="'layer1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td>|-|</td>
+            <td><input :id="'delta1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
         </tr>
-
+        <tr><td>--</td></tr>
         <tr v-for="(row,index) in weight1_2IdMatrix">
             <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight1_2IdMatrix.length"></td>
             <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td>|-|</td>
             <td><input :id="'layer2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td>|-|</td>
+            <td><input :id="'delta2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
         </tr>
-
+        <tr><td>--</td></tr>
         <tr v-for="(row,index) in weight2_3IdMatrix">
             <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
             <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td>|-|</td>
             <td><input :id="'layer3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
-            <td>--</td>
+            <td>|-|</td>
+            <td><input :id="'delta3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
             <td><input :id="'label_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
         </tr>
 
@@ -114,6 +124,7 @@
 <script src="petite-vue.iife.js"></script>
 <script>
 
+const learnRate = 0.2;
 const dataSet = [
     {
         data: [
@@ -125,7 +136,7 @@ const dataSet = [
         ],
         lable: '0',
         labelMatrix: [
-            1,0,0,0,0,0,0,0,0,0
+            [1],[0],[0],[0],[0],[0],[0],[0],[0],[0]
         ]
     },
     {
@@ -138,7 +149,7 @@ const dataSet = [
         ],
         lable: '1',
         labelMatrix: [
-            0,1,0,0,0,0,0,0,0,0
+            [0],[1],[0],[0],[0],[0],[0],[0],[0],[0]
         ]
     },
     {
@@ -151,7 +162,7 @@ const dataSet = [
         ],
         lable: '2',
         labelMatrix: [
-            0,0,1,0,0,0,0,0,0,0
+            [0],[0],[1],[0],[0],[0],[0],[0],[0],[0]
         ]
     },
     {
@@ -164,7 +175,7 @@ const dataSet = [
         ],
         lable: '3',
         labelMatrix: [
-            0,0,0,1,0,0,0,0,0,0
+            [0],[0],[0],[1],[0],[0],[0],[0],[0],[0]
         ]
     },
     {
@@ -177,7 +188,7 @@ const dataSet = [
         ],
         lable: '4',
         labelMatrix: [
-            0,0,0,0,1,0,0,0,0,0
+            [0],[0],[0],[0],[1],[0],[0],[0],[0],[0]
         ]
     },
     {
@@ -190,7 +201,7 @@ const dataSet = [
         ],
         lable: '5',
         labelMatrix: [
-            0,0,0,0,0,1,0,0,0,0
+            [0],[0],[0],[0],[0],[1],[0],[0],[0],[0]
         ]
     },
     {
@@ -203,7 +214,7 @@ const dataSet = [
         ],
         lable: '6',
         labelMatrix: [
-            0,0,0,0,0,0,1,0,0,0
+            [0],[0],[0],[0],[0],[0],[1],[0],[0],[0]
         ]
     },
     {
@@ -216,7 +227,7 @@ const dataSet = [
         ],
         lable: '7',
         labelMatrix: [
-            0,0,0,0,0,0,0,1,0,0
+            [0],[0],[0],[0],[0],[0],[0],[1],[0],[0]
         ]
     },
     {
@@ -229,7 +240,7 @@ const dataSet = [
         ],
         lable: '8',
         labelMatrix: [
-            0,0,0,0,0,0,0,0,1,0
+            [0],[0],[0],[0],[0],[0],[0],[0],[1],[0]
         ]
     },
     {
@@ -242,7 +253,7 @@ const dataSet = [
         ],
         lable: '9',
         labelMatrix: [
-            0,0,0,0,0,0,0,0,0,1
+            [0],[0],[0],[0],[0],[0],[0],[0],[0],[1]
         ]
     }
 ];
@@ -332,6 +343,33 @@ const layer0IdMatrix = [
         ["label_8_0"],
         ["label_9_0"]
     ]
+
+    const delta1IdMatrix = [
+        ["delta1_0_0"],
+        ["delta1_1_0"],
+        ["delta1_2_0"],
+        ["delta1_3_0"]
+    ]
+
+    const delta2IdMatrix = [
+        ["delta2_0_0"],
+        ["delta2_1_0"],
+        ["delta2_2_0"],
+        ["delta2_3_0"]
+    ]
+
+    const delta3IdMatrix = [
+        ["delta3_0_0"],
+        ["delta3_1_0"],
+        ["delta3_2_0"],
+        ["delta3_3_0"],
+        ["delta3_4_0"],
+        ["delta3_5_0"],
+        ["delta3_6_0"],
+        ["delta3_7_0"],
+        ["delta3_8_0"],
+        ["delta3_9_0"]
+    ]
     const maxColumnCount = Math.max(
         weight0_1IdMatrix[0].length, weight1_2IdMatrix[0].length, weight2_3IdMatrix[0].length
     );
@@ -340,7 +378,7 @@ const layer0IdMatrix = [
     );
 
     function getValue(id) {
-        console.log("getValue id", id)
+        // console.log("getValue id", id)
         if (id == null) {
             debugger;
         }
@@ -353,7 +391,7 @@ const layer0IdMatrix = [
         
     }
     function setValue(id, value) {
-        console.log("setValue id", id)
+        // console.log("setValue id", id)
         const element = document.getElementById(id);
         if(element.type == "checkbox"){
             return element.checked = value;
@@ -364,35 +402,35 @@ const layer0IdMatrix = [
     }
 
     function setComputer1(a,b,c,d,e,f,g){
-        document.getElementById("computer1_a").innerHTML = a ? a : "";
-        document.getElementById("computer1_b").innerHTML = b ? b : "";
-        document.getElementById("computer1_c").innerHTML = c ? c : "";
-        document.getElementById("computer1_d").innerHTML = d ? d : "";
-        document.getElementById("computer1_e").innerHTML = e ? e : "";
-        document.getElementById("computer1_f").innerHTML = f ? f : "";
-        document.getElementById("computer1_g").innerHTML = g ? g : "";
+        document.getElementById("computer1_a").innerHTML = a != null ? a : "";
+        document.getElementById("computer1_b").innerHTML = b != null ? b : "";
+        document.getElementById("computer1_c").innerHTML = c != null ? c : "";
+        document.getElementById("computer1_d").innerHTML = d != null ? d : "";
+        document.getElementById("computer1_e").innerHTML = e != null ? e : "";
+        document.getElementById("computer1_f").innerHTML = f != null ? f : "";
+        document.getElementById("computer1_g").innerHTML = g != null ? g : "";
     }
 
     function setComputer2(a,b,c,d,e,f,g){
-        document.getElementById("computer2_a").innerHTML = a ? a : "";
-        document.getElementById("computer2_b").innerHTML = b ? b : "";
-        document.getElementById("computer2_c").innerHTML = c ? c : "";
-        document.getElementById("computer2_d").innerHTML = d ? d : "";
-        document.getElementById("computer2_e").innerHTML = e ? e : "";
-        document.getElementById("computer2_f").innerHTML = f ? f : "";
-        document.getElementById("computer2_g").innerHTML = g ? g : "";
+        document.getElementById("computer2_a").innerHTML = a != null ? a : "";
+        document.getElementById("computer2_b").innerHTML = b != null ? b : "";
+        document.getElementById("computer2_c").innerHTML = c != null ? c : "";
+        document.getElementById("computer2_d").innerHTML = d != null ? d : "";
+        document.getElementById("computer2_e").innerHTML = e != null ? e : "";
+        document.getElementById("computer2_f").innerHTML = f != null ? f : "";
+        document.getElementById("computer2_g").innerHTML = g != null ? g : "";
     }
 
     async function playMatrixCrossStepAnimation(matrixIdA,matrixIdB,resultMatrixId){
         const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
         setComputer1(getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result);
-        await sleep(14);
+        // await sleep(14);
     }
 
     async function playActivationFunction‌Animation(resultMatrixId){
         const result = 1 / (1 + Math.exp(getValue(resultMatrixId)))
         setComputer2("1 / (1 + Math.exp(",getValue(resultMatrixId),")","=",result);
-        await sleep(14);
+        // await sleep(14);
     }
     
     function clearComputer1(){
@@ -479,31 +517,88 @@ const layer0IdMatrix = [
         }
     }
 
-    async function demandFunction‌(resultMatrixId, labelMatrix){
-        
+    async function outputDeltaFunction‌(outputIdMatrix, labelIdMatrix, outputDeltaIdMatrix){
+        for(let i=0;i<outputIdMatrix.length;i++){
+            const outputId = outputIdMatrix[i][0];
+            const labelId = labelIdMatrix[i][0];
+            const outputDeltaId = outputDeltaIdMatrix[i][0];
+            const resultValue = getValue(outputId);
+            const labelValue = getValue(labelId);
+            const outputDeltaValue = 0.2 * (resultValue - labelValue);
+            setComputer1("0.2","* (",resultValue,"-",labelValue,") =",outputDeltaValue);
+            setValue(outputDeltaId, outputDeltaValue);
+            // await sleep(14);
+        }
     }
 
-    async function backpropagation‌(){
-
+    async function backpropagation‌(learnRate, weightIdMatrix, deltaIdMatrix, layerIdMatrix, upperLayerIdMatrix, upperLayerDeltaIdMatrix){
+        // 更新上一层到这一层的权重
+        for(let i=0;i<weightIdMatrix.length;i++){
+            for(let j=0;j<weightIdMatrix[i].length;j++){
+                const weightId = weightIdMatrix[i][j];
+                const deltaId = deltaIdMatrix[i][0];
+                const layerId = layerIdMatrix[i][0];
+                const upperLayerId = upperLayerIdMatrix[j][0];
+                const weightValue = getValue(weightId);
+                const deltaValue = getValue(deltaId);
+                const layerValue = getValue(layerId);
+                const upperLayerValue = getValue(upperLayerId);
+                const newWeightValue = weightValue +  (learnRate * -1) * deltaValue * upperLayerValue * layerValue * (1 - layerValue);
+                setComputer1(weightValue,"+","(",learnRate,"* -1) *",deltaValue,"*",upperLayerValue,"*",layerValue,"* (1 -",layerValue,")","=",newWeightValue);
+                setValue(weightId, newWeightValue);
+                // await sleep(14);
+            }
+        }
+        if(!upperLayerDeltaIdMatrix){
+            return;
+        }
+        // 输出上一层的神经元的需要修改的量
+        for(let i=0;i<upperLayerDeltaIdMatrix.length;i++){
+            const upperLayerDeltaId = upperLayerDeltaIdMatrix[i][0];
+            setValue(upperLayerDeltaId, 0);
+            for(let m=0;m<weightIdMatrix.length;m++){
+                const weightId = weightIdMatrix[m][i];
+                const deltaId = deltaIdMatrix[m][0];
+                const weightValue = getValue(weightId);
+                const deltaValue = getValue(deltaId);
+                const upperLayerDelta = getValue(upperLayerDeltaId);
+                const newUpperLayerDelta = upperLayerDelta + weightValue * deltaValue;
+                setValue(upperLayerDeltaId, newUpperLayerDelta);
+                // await sleep(14);
+            }
+        }
+        
     }
 
     async function start(){
         await sleep(1000);
         const dataSet = getDataSet();
-        for(let i = 0; i < dataSet.length; i++){
-            const item = dataSet[i];
-            clearComputer1();
-            putDataToScreen(item.data, item.label);
-            // 正向传播
-            putTrainDataToMatrix(item.data, item.labelMatrix);
-            await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
-            await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
-            await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
-            // 反向传播
-            layer3IdMatrix
-
+        setValue(weight0_1IdMatrix[0][0], 1);
+        for(let i=0;i<1000;i++){
+            setValue(weight0_1IdMatrix[0][0],getValue(weight0_1IdMatrix[0][0]) + 1);
         }
-        
+        console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
+        for(let t = 0; t < 1000; t++){
+            for(let i = 0; i < dataSet.length; i++){
+                const item = dataSet[i];
+                clearComputer1();
+                putDataToScreen(item.data, item.label);
+                // 正向传播
+                putTrainDataToMatrix(item.data, item.labelMatrix);
+                await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
+                await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
+                await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+                // 反向传播
+                await outputDeltaFunction‌(layer3IdMatrix, labelIdMatrix, delta3IdMatrix);
+                await backpropagation‌(learnRate, weight2_3IdMatrix, delta3IdMatrix, layer3IdMatrix, layer2IdMatrix, delta2IdMatrix);
+                await backpropagation‌(learnRate, weight1_2IdMatrix, delta2IdMatrix, layer2IdMatrix, layer1IdMatrix, delta1IdMatrix);
+                await backpropagation‌(learnRate, weight0_1IdMatrix, delta1IdMatrix, layer1IdMatrix, layer0IdMatrix);
+            }
+            // await sleep(14);
+            if(t % 10 == 0){
+                await sleep(1000);
+            }
+        }
     }
     
     async function sleep(ms){
