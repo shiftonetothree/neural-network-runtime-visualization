@@ -105,6 +105,8 @@
             <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
             <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
             <td><input :id="'layer3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td>--</td>
+            <td><input :id="'label_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
         </tr>
 
     </table>
@@ -121,7 +123,10 @@ const dataSet = [
             [1,0,1],
             [1,1,1],
         ],
-        lable: '0'
+        lable: '0',
+        labelMatrix: [
+            1,0,0,0,0,0,0,0,0,0
+        ]
     },
     {
         data: [
@@ -131,7 +136,10 @@ const dataSet = [
             [0,1,0],
             [1,1,1],
         ],
-        lable: '1'
+        lable: '1',
+        labelMatrix: [
+            0,1,0,0,0,0,0,0,0,0
+        ]
     },
     {
         data: [
@@ -141,7 +149,10 @@ const dataSet = [
             [1,0,0],
             [1,1,1],
         ],
-        lable: '2'
+        lable: '2',
+        labelMatrix: [
+            0,0,1,0,0,0,0,0,0,0
+        ]
     },
     {
         data: [
@@ -151,7 +162,10 @@ const dataSet = [
             [0,0,1],
             [1,1,1],
         ],
-        lable: '3'
+        lable: '3',
+        labelMatrix: [
+            0,0,0,1,0,0,0,0,0,0
+        ]
     },
     {
         data: [
@@ -161,7 +175,10 @@ const dataSet = [
             [0,0,1],
             [0,0,1],
         ],
-        lable: '4'
+        lable: '4',
+        labelMatrix: [
+            0,0,0,0,1,0,0,0,0,0
+        ]
     },
     {
         data: [
@@ -171,7 +188,10 @@ const dataSet = [
             [0,0,1],
             [1,1,1],
         ],
-        lable: '5'
+        lable: '5',
+        labelMatrix: [
+            0,0,0,0,0,1,0,0,0,0
+        ]
     },
     {
         data: [
@@ -181,7 +201,10 @@ const dataSet = [
             [1,0,1],
             [1,1,1],
         ],
-        lable: '6'
+        lable: '6',
+        labelMatrix: [
+            0,0,0,0,0,0,1,0,0,0
+        ]
     },
     {
         data: [
@@ -191,7 +214,10 @@ const dataSet = [
             [0,0,1],
             [0,0,1],
         ],
-        lable: '7'
+        lable: '7',
+        labelMatrix: [
+            0,0,0,0,0,0,0,1,0,0
+        ]
     },
     {
         data: [
@@ -201,7 +227,10 @@ const dataSet = [
             [1,0,1],
             [1,1,1],
         ],
-        lable: '8'
+        lable: '8',
+        labelMatrix: [
+            0,0,0,0,0,0,0,0,1,0
+        ]
     },
     {
         data: [
@@ -211,7 +240,10 @@ const dataSet = [
             [0,0,1],
             [1,1,1],
         ],
-        lable: '9'
+        lable: '9',
+        labelMatrix: [
+            0,0,0,0,0,0,0,0,0,1
+        ]
     }
 ];
 
@@ -286,6 +318,19 @@ const layer0IdMatrix = [
         ["layer3_7_0"],
         ["layer3_8_0"],
         ["layer3_9_0"]
+    ]
+
+    const labelIdMatrix = [
+        ["label_0_0"],
+        ["label_1_0"],
+        ["label_2_0"],
+        ["label_3_0"],
+        ["label_4_0"],
+        ["label_5_0"],
+        ["label_6_0"],
+        ["label_7_0"],
+        ["label_8_0"],
+        ["label_9_0"]
     ]
     const maxColumnCount = Math.max(
         weight0_1IdMatrix[0].length, weight1_2IdMatrix[0].length, weight2_3IdMatrix[0].length
@@ -366,8 +411,8 @@ const layer0IdMatrix = [
         }
     }
     
-    /** 矩阵乘法 */
-    async function matrixCross(matrixIdsA, matrixIdsB, resultMatrixIds) {
+    /** 激活函数和矩阵乘法的复合Sigmod(AB) */
+    async function sigmodMatrixCross(matrixIdsA, matrixIdsB, resultMatrixIds) {
         for (let i = 0; i < matrixIdsA.length; i++) {
             // 左取行
             const matrixIdsARow = matrixIdsA[i];
@@ -415,18 +460,31 @@ const layer0IdMatrix = [
         }
     }
 
-    function putDataToLayer0(data){
+    function putTrainDataToMatrix(data, labelMatrix){
         let m = 0;
         for(let i = 0; i < data.length; i++){
             const row = data[i];
             for(let j = 0; j< row.length; j++){
                 const value = row[j];
-                const id = "layer0_" + m + "_0";
-                setValue(id, value);
+                const layer0Id = "layer0_" + m + "_0";
+                setValue(layer0Id, value);
                 m++;
             }
 
         }
+        for(let i = 0; i < labelMatrix.length; i++){
+            const value = labelMatrix[i];
+            const labelMatrixId = "label_" + i + "_0";
+            setValue(labelMatrixId, value);
+        }
+    }
+
+    async function demandFunction‌(resultMatrixId, labelMatrix){
+        
+    }
+
+    async function backpropagation‌(){
+
     }
 
     async function start(){
@@ -436,10 +494,14 @@ const layer0IdMatrix = [
             const item = dataSet[i];
             clearComputer1();
             putDataToScreen(item.data, item.label);
-            putDataToLayer0(item.data);
-            await matrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
-            await matrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
-            await matrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+            // 正向传播
+            putTrainDataToMatrix(item.data, item.labelMatrix);
+            await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
+            await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
+            await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+            // 反向传播
+            layer3IdMatrix
+
         }
         
     }
