@@ -144,7 +144,7 @@
 <script src="petite-vue.iife.js"></script>
 <script>
 
-const learnRate = 1;
+const learnRate = 0.2;
 const dataSet = [
     {
         data: [
@@ -435,9 +435,9 @@ const layer0IdMatrix = [
 
     function getValue(id) {
         // console.log("getValue id", id)
-        if (id == null) {
-            debugger;
-        }
+        // if (id == null) {
+        //     debugger;
+        // }
         const element = document.getElementById(id);
         if(element.type == "checkbox"){
             return parseFloat(element.checked);
@@ -525,17 +525,22 @@ const layer0IdMatrix = [
             for(let j=0;j< matrixIdsB[0].length;j++){
                 // 右取列
                 const matrixIdsBColumn = getColumn(matrixIdsB, j);
+                const resultMatrixId = resultMatrixIds[i][j];
+                // if(resultMatrixId == "layer3_0_0"){
+                //     debugger
+                // }
+                setValue(resultMatrixId, 0);
                 for(let m = 0; m < matrixIdsARow.length; m++){
+                    // 相乘再相加
                     const matrixIdA = matrixIdsARow[m];
                     const matrixIdB = matrixIdsBColumn[m];
-                    const resultMatrixId = resultMatrixIds[i][j];
                     await playMatrixCrossStepAnimation(matrixIdA, matrixIdB, resultMatrixId);
                     const newValue = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
                     setValue(resultMatrixId, newValue);
-                    await playActivationFunction‌Animation(resultMatrixId);
-                    const newValueAfterActivation = 1 / (1 + Math.exp(-newValue))
-                    setValue(resultMatrixId, newValueAfterActivation);
                 }
+                await playActivationFunction‌Animation(resultMatrixId);
+                const newValueAfterActivation = 1 / (1 + Math.exp(-1 * getValue(resultMatrixId)));
+                setValue(resultMatrixId, newValueAfterActivation);
             }
         }
     }
@@ -595,7 +600,7 @@ const layer0IdMatrix = [
             const outputDeltaValue = 0.2 * (resultValue - labelValue);
             setComputer1("0.2","* (",resultValue,"-",labelValue,") =",outputDeltaValue);
             setValue(outputDeltaId, outputDeltaValue);
-            await sleep(14);
+            // await sleep(14);
         }
     }
 
@@ -640,9 +645,27 @@ const layer0IdMatrix = [
                 setValue(upperLayerDeltaId, newUpperLayerDelta);
                 // await sleep(14);
             }
-            await sleep(14);
+            // await sleep(14);
         }
         
+    }
+
+    function lightUpMaxValue(idMatrix){
+        let maxValue = -Infinity;
+        let maxId = null;
+        for(let i=0;i<idMatrix.length;i++){
+            const id = idMatrix[i][0];
+            const element = document.getElementById(id);
+            element.style.backgroundColor = "white";
+            const value = getValue(id);
+            if(value > maxValue){
+                maxValue = value;
+                maxId = id;
+            }
+            
+        }
+        const maxElement = document.getElementById(maxId);
+        maxElement.style.backgroundColor = "red";
     }
 
     async function start(){
@@ -665,12 +688,15 @@ const layer0IdMatrix = [
                 await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
                 // 反向传播
                 await outputDeltaFunction‌(layer3IdMatrix, labelIdMatrix, delta3IdMatrix);
+                lightUpMaxValue(layer3IdMatrix);
+                lightUpMaxValue(labelIdMatrix);
                 await backpropagation‌(learnRate, weight2_3IdMatrix, delta3IdMatrix, layer3IdMatrix, layer2IdMatrix, delta2IdMatrix);
                 await backpropagation‌(learnRate, weight1_2IdMatrix, delta2IdMatrix, layer2IdMatrix, layer1IdMatrix, delta1IdMatrix);
                 await backpropagation‌(learnRate, weight0_1IdMatrix, delta1IdMatrix, layer1IdMatrix, layer0IdMatrix);
             }
             // await sleep(14);
             if(t % 10 == 0){
+                console.log("第" + t + "次训练完成", new Date());
                 await sleep(1000);
             }
         }
