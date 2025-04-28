@@ -75,13 +75,33 @@
 
     <table>
         <tr>
-            <td id="computer1_a"></td><td id="computer1_b"></td><td id="computer1_c"></td><td id="computer1_d"></td><td id="computer1_e"></td><td id="computer1_f"></td><td id="computer1_g"></td>
+            <td id="computer1_a"></td>
+            <td id="computer1_b"></td>
+            <td id="computer1_c"></td>
+            <td id="computer1_d"></td>
+            <td id="computer1_e"></td>
+            <td id="computer1_f"></td>
+            <td id="computer1_g"></td>
+            <td id="computer1_h"></td>
+            <td id="computer1_i"></td>
+            <td id="computer1_j"></td>
+            <td id="computer1_k"></td>
         </tr>
     </table>
 
     <table>
         <tr>
-            <td id="computer2_a"></td><td id="computer2_b"></td><td id="computer2_c"></td><td id="computer2_d"></td><td id="computer2_e"></td><td id="computer2_f"></td><td id="computer2_g"></td>
+            <td id="computer2_a"></td>
+            <td id="computer2_b"></td>
+            <td id="computer2_c"></td>
+            <td id="computer2_d"></td>
+            <td id="computer2_e"></td>
+            <td id="computer2_f"></td>
+            <td id="computer2_g"></td>
+            <td id="computer2_h"></td>
+            <td id="computer2_i"></td>
+            <td id="computer2_j"></td>
+            <td id="computer2_k"></td>
         </tr>
     </table>
 
@@ -89,31 +109,31 @@
         <tr v-for="(id,index) in layer0IdMatrix">
             <td v-if="index == 0" :colspan="maxColumnCount" :rowspan="maxRowCount"></td>
             <td>|-|</td>
-            <td><input :id="id" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="id" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
         </tr>
         <tr><td>--</td></tr>
         <tr v-for="(row,index) in weight0_1IdMatrix">
-            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
             <td>|-|</td>
-            <td><input :id="'layer1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="'layer1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
             <td>|-|</td>
             <td><input :id="'delta1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
         </tr>
         <tr><td>--</td></tr>
         <tr v-for="(row,index) in weight1_2IdMatrix">
             <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight1_2IdMatrix.length"></td>
-            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
             <td>|-|</td>
-            <td><input :id="'layer2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="'layer2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
             <td>|-|</td>
             <td><input :id="'delta2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
         </tr>
         <tr><td>--</td></tr>
         <tr v-for="(row,index) in weight2_3IdMatrix">
             <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
-            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
             <td>|-|</td>
-            <td><input :id="'layer3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() + 0.01"></td>
+            <td><input :id="'layer3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
             <td>|-|</td>
             <td><input :id="'delta3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
             <td><input :id="'label_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
@@ -124,7 +144,7 @@
 <script src="petite-vue.iife.js"></script>
 <script>
 
-const learnRate = 0.2;
+const learnRate = 1;
 const dataSet = [
     {
         data: [
@@ -280,7 +300,13 @@ const layer0IdMatrix = [
         ["weight0_1_0_0", "weight0_1_0_1", "weight0_1_0_2", "weight0_1_0_3", "weight0_1_0_4", "weight0_1_0_5", "weight0_1_0_6", "weight0_1_0_7", "weight0_1_0_8", "weight0_1_0_9", "weight0_1_0_10", "weight0_1_0_11", "weight0_1_0_12", "weight0_1_0_13", "weight0_1_0_14"],
         ["weight0_1_1_0", "weight0_1_1_1", "weight0_1_1_2", "weight0_1_1_3", "weight0_1_1_4", "weight0_1_1_5", "weight0_1_1_6", "weight0_1_1_7", "weight0_1_1_8", "weight0_1_1_9", "weight0_1_1_10", "weight0_1_1_11", "weight0_1_1_12", "weight0_1_1_13", "weight0_1_1_14"],
         ["weight0_1_2_0", "weight0_1_2_1", "weight0_1_2_2", "weight0_1_2_3", "weight0_1_2_4", "weight0_1_2_5", "weight0_1_2_6", "weight0_1_2_7", "weight0_1_2_8", "weight0_1_2_9", "weight0_1_2_10", "weight0_1_2_11", "weight0_1_2_12", "weight0_1_2_13", "weight0_1_2_14"],
-        ["weight0_1_3_0", "weight0_1_3_1", "weight0_1_3_2", "weight0_1_3_3", "weight0_1_3_4", "weight0_1_3_5", "weight0_1_3_6", "weight0_1_3_7", "weight0_1_3_8", "weight0_1_3_9", "weight0_1_3_10", "weight0_1_3_11", "weight0_1_3_12", "weight0_1_3_13", "weight0_1_3_14"]
+        ["weight0_1_3_0", "weight0_1_3_1", "weight0_1_3_2", "weight0_1_3_3", "weight0_1_3_4", "weight0_1_3_5", "weight0_1_3_6", "weight0_1_3_7", "weight0_1_3_8", "weight0_1_3_9", "weight0_1_3_10", "weight0_1_3_11", "weight0_1_3_12", "weight0_1_3_13", "weight0_1_3_14"],
+        ["weight0_1_4_0", "weight0_1_4_1", "weight0_1_4_2", "weight0_1_4_3", "weight0_1_4_4", "weight0_1_4_5", "weight0_1_4_6", "weight0_1_4_7", "weight0_1_4_8", "weight0_1_4_9", "weight0_1_4_10", "weight0_1_4_11", "weight0_1_4_12", "weight0_1_4_13", "weight0_1_4_14"],
+        ["weight0_1_5_0", "weight0_1_5_1", "weight0_1_5_2", "weight0_1_5_3", "weight0_1_5_4", "weight0_1_5_5", "weight0_1_5_6", "weight0_1_5_7", "weight0_1_5_8", "weight0_1_5_9", "weight0_1_5_10", "weight0_1_5_11", "weight0_1_5_12", "weight0_1_5_13", "weight0_1_5_14"],
+        ["weight0_1_6_0", "weight0_1_6_1", "weight0_1_6_2", "weight0_1_6_3", "weight0_1_6_4", "weight0_1_6_5", "weight0_1_6_6", "weight0_1_6_7", "weight0_1_6_8", "weight0_1_6_9", "weight0_1_6_10", "weight0_1_6_11", "weight0_1_6_12", "weight0_1_6_13", "weight0_1_6_14"],
+        ["weight0_1_7_0", "weight0_1_7_1", "weight0_1_7_2", "weight0_1_7_3", "weight0_1_7_4", "weight0_1_7_5", "weight0_1_7_6", "weight0_1_7_7", "weight0_1_7_8", "weight0_1_7_9", "weight0_1_7_10", "weight0_1_7_11", "weight0_1_7_12", "weight0_1_7_13", "weight0_1_7_14"],
+        ["weight0_1_8_0", "weight0_1_8_1", "weight0_1_8_2", "weight0_1_8_3", "weight0_1_8_4", "weight0_1_8_5", "weight0_1_8_6", "weight0_1_8_7", "weight0_1_8_8", "weight0_1_8_9", "weight0_1_8_10", "weight0_1_8_11", "weight0_1_8_12", "weight0_1_8_13", "weight0_1_8_14"],
+        ["weight0_1_9_0", "weight0_1_9_1", "weight0_1_9_2", "weight0_1_9_3", "weight0_1_9_4", "weight0_1_9_5", "weight0_1_9_6", "weight0_1_9_7", "weight0_1_9_8", "weight0_1_9_9", "weight0_1_9_10", "weight0_1_9_11", "weight0_1_9_12", "weight0_1_9_13", "weight0_1_9_14"]
     ]
 
 
@@ -288,34 +314,52 @@ const layer0IdMatrix = [
         ["layer1_0_0"],
         ["layer1_1_0"],
         ["layer1_2_0"],
-        ["layer1_3_0"]
+        ["layer1_3_0"],
+        ["layer1_4_0"],
+        ["layer1_5_0"],
+        ["layer1_6_0"],
+        ["layer1_7_0"],
+        ["layer1_8_0"],
+        ["layer1_9_0"]
     ]
 
     const weight1_2IdMatrix = [
-        ["weight1_2_0_0", "weight1_2_0_1", "weight1_2_0_2", "weight1_2_0_3"],
-        ["weight1_2_1_0", "weight1_2_1_1", "weight1_2_1_2", "weight1_2_1_3"],
-        ["weight1_2_2_0", "weight1_2_2_1", "weight1_2_2_2", "weight1_2_2_3"],
-        ["weight1_2_3_0", "weight1_2_3_1", "weight1_2_3_2", "weight1_2_3_3"]
+        ["weight1_2_0_0", "weight1_2_0_1", "weight1_2_0_2", "weight1_2_0_3", "weight1_2_0_4", "weight1_2_0_5", "weight1_2_0_6", "weight1_2_0_7", "weight1_2_0_8", "weight1_2_0_9"],
+        ["weight1_2_1_0", "weight1_2_1_1", "weight1_2_1_2", "weight1_2_1_3", "weight1_2_1_4", "weight1_2_1_5", "weight1_2_1_6", "weight1_2_1_7", "weight1_2_1_8", "weight1_2_1_9"],
+        ["weight1_2_2_0", "weight1_2_2_1", "weight1_2_2_2", "weight1_2_2_3", "weight1_2_2_4", "weight1_2_2_5", "weight1_2_2_6", "weight1_2_2_7", "weight1_2_2_8", "weight1_2_2_9"],
+        ["weight1_2_3_0", "weight1_2_3_1", "weight1_2_3_2", "weight1_2_3_3", "weight1_2_3_4", "weight1_2_3_5", "weight1_2_3_6", "weight1_2_3_7", "weight1_2_3_8", "weight1_2_3_9"],
+        ["weight1_2_4_0", "weight1_2_4_1", "weight1_2_4_2", "weight1_2_4_3", "weight1_2_4_4", "weight1_2_4_5", "weight1_2_4_6", "weight1_2_4_7", "weight1_2_4_8", "weight1_2_4_9"],
+        ["weight1_2_5_0", "weight1_2_5_1", "weight1_2_5_2", "weight1_2_5_3", "weight1_2_5_4", "weight1_2_5_5", "weight1_2_5_6", "weight1_2_5_7", "weight1_2_5_8", "weight1_2_5_9"],
+        ["weight1_2_6_0", "weight1_2_6_1", "weight1_2_6_2", "weight1_2_6_3", "weight1_2_6_4", "weight1_2_6_5", "weight1_2_6_6", "weight1_2_6_7", "weight1_2_6_8", "weight1_2_6_9"],
+        ["weight1_2_7_0", "weight1_2_7_1", "weight1_2_7_2", "weight1_2_7_3", "weight1_2_7_4", "weight1_2_7_5", "weight1_2_7_6", "weight1_2_7_7", "weight1_2_7_8", "weight1_2_7_9"],
+        ["weight1_2_8_0", "weight1_2_8_1", "weight1_2_8_2", "weight1_2_8_3", "weight1_2_8 4", "weight1_2_8_5", "weight1_2_8_6", "weight1_2_8_7", "weight1_2_8_8", "weight1_2_8_9"],
+        ["weight1_2_9_0", "weight1_2_9_1", "weight1_2_9_2", "weight1_2_9_3", "weight1_2_9 4", "weight1_2_9_5", "weight1_2_9_6", "weight1_2_9_7", "weight1_2_9_8", "weight1_2_9_9"]
     ]
 
     const layer2IdMatrix = [
         ["layer2_0_0"],
         ["layer2_1_0"],
         ["layer2_2_0"],
-        ["layer2_3_0"]
+        ["layer2_3_0"],
+        ["layer2_4_0"],
+        ["layer2_5_0"],
+        ["layer2_6_0"],
+        ["layer2_7_0"],
+        ["layer2_8_0"],
+        ["layer2_9_0"]
     ]
 
     const weight2_3IdMatrix = [
-        ["weight2_3_0_0", "weight2_3_0_1", "weight2_3_0_2", "weight2_3_0_3"],
-        ["weight2_3_1_0", "weight2_3_1_1", "weight2_3_1_2", "weight2_3_1_3"],
-        ["weight2_3_2_0", "weight2_3_2_1", "weight2_3_2_2", "weight2_3_2_3"],
-        ["weight2_3_3_0", "weight2_3_3_1", "weight2_3_3_2", "weight2_3_3_3"],
-        ["weight2_3_4_0", "weight2_3_4_1", "weight2_3_4_2", "weight2_3_4_3"],
-        ["weight2_3_5_0", "weight2_3_5_1", "weight2_3_5_2", "weight2_3_5_3"],
-        ["weight2_3_6_0", "weight2_3_6_1", "weight2_3_6_2", "weight2_3_6_3"],
-        ["weight2_3_7_0", "weight2_3_7_1", "weight2_3_7_2", "weight2_3_7_3"],
-        ["weight2_3_8_0", "weight2_3_8_1", "weight2_3_8_2", "weight2_3_8_3"],
-        ["weight2_3_9_0", "weight2_3_9_1", "weight2_3_9_2", "weight2_3_9_3"]
+        ["weight2_3_0_0", "weight2_3_0_1", "weight2_3_0_2", "weight2_3_0_3", "weight2_3_0_4", "weight2_3_0_5", "weight2_3_0_6", "weight2_3_0_7", "weight2_3_0_8", "weight2_3_0_9"],
+        ["weight2_3_1_0", "weight2_3_1_1", "weight2_3_1_2", "weight2_3_1_3", "weight2_3_1_4", "weight2_3_1_5", "weight2_3_1_6", "weight2_3_1_7", "weight2_3_1_8", "weight2_3_1_9"],
+        ["weight2_3_2_0", "weight2_3_2_1", "weight2_3_2_2", "weight2_3_2_3", "weight2_3_2_4", "weight2_3_2_5", "weight2_3_2_6", "weight2_3_2_7", "weight2_3_2_8", "weight2_3_2_9"],
+        ["weight2_3_3_0", "weight2_3_3_1", "weight2_3_3_2", "weight2_3_3_3", "weight2_3_3_4", "weight2_3_3_5", "weight2_3_3_6", "weight2_3_3_7", "weight2_3_3_8", "weight2_3_3_9"],
+        ["weight2_3_4_0", "weight2_3_4_1", "weight2_3_4_2", "weight2_3_4_3", "weight2_3_4_4", "weight2_3_4_5", "weight2_3_4_6", "weight2_3_4_7", "weight2_3_4_8", "weight2_3_4_9"],
+        ["weight2_3_5_0", "weight2_3_5_1", "weight2_3_5_2", "weight2_3_5_3", "weight2_3_5_4", "weight2_3_5_5", "weight2_3_5_6", "weight2_3_5_7", "weight2_3_5_8", "weight2_3_5_9"],
+        ["weight2_3_6_0", "weight2_3_6_1", "weight2_3_6_2", "weight2_3_6_3", "weight2_3_6_4", "weight2_3_6_5", "weight2_3_6_6", "weight2_3_6_7", "weight2_3_6_8", "weight2_3_6_9"],
+        ["weight2_3_7_0", "weight2_3_7_1", "weight2_3_7_2", "weight2_3_7_3", "weight2_3_7_4", "weight2_3_7_5", "weight2_3_7_6", "weight2_3_7_7", "weight2_3_7_8", "weight2_3_7_9"],
+        ["weight2_3_8_0", "weight2_3_8_1", "weight2_3_8_2", "weight2_3_8_3", "weight2_3_8_4", "weight2_3_8_5", "weight2_3_8_6", "weight2_3_8_7", "weight2_3_8_8", "weight2_3_8_9"],
+        ["weight2_3_9_0", "weight2_3_9_1", "weight2_3_9_2", "weight2_3_9_3", "weight2_3_9 4", "weight2_3_9_5", "weight2_3_9_6", "weight2_3_9_7", "weight2_3_9_8", "weight2_3_9_9"]
     ]
 
     const layer3IdMatrix = [
@@ -348,14 +392,26 @@ const layer0IdMatrix = [
         ["delta1_0_0"],
         ["delta1_1_0"],
         ["delta1_2_0"],
-        ["delta1_3_0"]
+        ["delta1_3_0"],
+        ["delta1_4_0"],
+        ["delta1_5_0"],
+        ["delta1_6_0"],
+        ["delta1_7_0"],
+        ["delta1_8_0"],
+        ["delta1_9_0"]
     ]
 
     const delta2IdMatrix = [
         ["delta2_0_0"],
         ["delta2_1_0"],
         ["delta2_2_0"],
-        ["delta2_3_0"]
+        ["delta2_3_0"],
+        ["delta2_4_0"],
+        ["delta2_5_0"],
+        ["delta2_6_0"],
+        ["delta2_7_0"],
+        ["delta2_8_0"],
+        ["delta2_9_0"]
     ]
 
     const delta3IdMatrix = [
@@ -391,6 +447,9 @@ const layer0IdMatrix = [
         
     }
     function setValue(id, value) {
+        // if(id == "weight0_1_0_0"){
+        //     debugger
+        // }
         // console.log("setValue id", id)
         const element = document.getElementById(id);
         if(element.type == "checkbox"){
@@ -401,7 +460,7 @@ const layer0IdMatrix = [
         
     }
 
-    function setComputer1(a,b,c,d,e,f,g){
+    function setComputer1(a,b,c,d,e,f,g,h,i,j,k){
         document.getElementById("computer1_a").innerHTML = a != null ? a : "";
         document.getElementById("computer1_b").innerHTML = b != null ? b : "";
         document.getElementById("computer1_c").innerHTML = c != null ? c : "";
@@ -409,9 +468,13 @@ const layer0IdMatrix = [
         document.getElementById("computer1_e").innerHTML = e != null ? e : "";
         document.getElementById("computer1_f").innerHTML = f != null ? f : "";
         document.getElementById("computer1_g").innerHTML = g != null ? g : "";
+        document.getElementById("computer1_h").innerHTML = h != null ? h : "";
+        document.getElementById("computer1_i").innerHTML = i != null ? i : "";
+        document.getElementById("computer1_j").innerHTML = j != null ? j : "";
+        document.getElementById("computer1_k").innerHTML = k != null ? k : "";
     }
 
-    function setComputer2(a,b,c,d,e,f,g){
+    function setComputer2(a,b,c,d,e,f,g,h,i,j,k){
         document.getElementById("computer2_a").innerHTML = a != null ? a : "";
         document.getElementById("computer2_b").innerHTML = b != null ? b : "";
         document.getElementById("computer2_c").innerHTML = c != null ? c : "";
@@ -419,6 +482,11 @@ const layer0IdMatrix = [
         document.getElementById("computer2_e").innerHTML = e != null ? e : "";
         document.getElementById("computer2_f").innerHTML = f != null ? f : "";
         document.getElementById("computer2_g").innerHTML = g != null ? g : "";
+        document.getElementById("computer2_h").innerHTML = h != null ? h : "";
+        document.getElementById("computer2_i").innerHTML = i != null ? i : "";
+        document.getElementById("computer2_j").innerHTML = j != null ? j : "";
+        document.getElementById("computer2_k").innerHTML = k != null ? k : "";
+        
     }
 
     async function playMatrixCrossStepAnimation(matrixIdA,matrixIdB,resultMatrixId){
@@ -527,7 +595,7 @@ const layer0IdMatrix = [
             const outputDeltaValue = 0.2 * (resultValue - labelValue);
             setComputer1("0.2","* (",resultValue,"-",labelValue,") =",outputDeltaValue);
             setValue(outputDeltaId, outputDeltaValue);
-            // await sleep(14);
+            await sleep(14);
         }
     }
 
@@ -544,8 +612,13 @@ const layer0IdMatrix = [
                 const layerValue = getValue(layerId);
                 const upperLayerValue = getValue(upperLayerId);
                 const newWeightValue = weightValue +  (learnRate * -1) * deltaValue * upperLayerValue * layerValue * (1 - layerValue);
-                setComputer1(weightValue,"+","(",learnRate,"* -1) *",deltaValue,"*",upperLayerValue,"*",layerValue,"* (1 -",layerValue,")","=",newWeightValue);
+                // if(weightId == "weight0_1_0_0"){
+                //     debugger
+                    
+                // }
+                setComputer1(weightValue,"+(",learnRate,"* -1) *",deltaValue,"*",upperLayerValue,"*",layerValue,"* (1 -",layerValue,")","=",newWeightValue);
                 setValue(weightId, newWeightValue);
+                
                 // await sleep(14);
             }
         }
@@ -563,9 +636,11 @@ const layer0IdMatrix = [
                 const deltaValue = getValue(deltaId);
                 const upperLayerDelta = getValue(upperLayerDeltaId);
                 const newUpperLayerDelta = upperLayerDelta + weightValue * deltaValue;
+                setComputer2(upperLayerDelta,"+",weightValue,"*",deltaValue,"=",newUpperLayerDelta);
                 setValue(upperLayerDeltaId, newUpperLayerDelta);
                 // await sleep(14);
             }
+            await sleep(14);
         }
         
     }
@@ -573,11 +648,11 @@ const layer0IdMatrix = [
     async function start(){
         await sleep(1000);
         const dataSet = getDataSet();
-        setValue(weight0_1IdMatrix[0][0], 1);
-        for(let i=0;i<1000;i++){
-            setValue(weight0_1IdMatrix[0][0],getValue(weight0_1IdMatrix[0][0]) + 1);
-        }
-        console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
+        // setValue(weight0_1IdMatrix[0][0], 1);
+        // for(let i=0;i<1000;i++){
+        //     setValue(weight0_1IdMatrix[0][0],getValue(weight0_1IdMatrix[0][0]) + 1);
+        // }
+        // console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
         for(let t = 0; t < 1000; t++){
             for(let i = 0; i < dataSet.length; i++){
                 const item = dataSet[i];
