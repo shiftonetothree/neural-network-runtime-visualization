@@ -75,19 +75,19 @@
         }
 
         .arrow{
-            background-color: red;
+            background-color: orange;
             position: absolute;
             height: 6px;
             transform-origin: left center;
         }
         .arrow_top{
             position: absolute;
-            top: -3px;
-            right: 0;
-            transform: rotate(45deg);
-            width: 12px;
-            height: 12px;
-            background-color: red;;
+            top: -6px;
+            right: -10px;
+            clip-path: polygon(0% 0%, 100% 50%, 0% 100%, 30% 50%);
+            width: 18px;
+            height: 18px;
+            background-color: orange;;
             transform-origin: center;
         }
         .matrix_container{
@@ -540,7 +540,7 @@ const layer0IdMatrix = [
         const {x: x1, y: y1} = getAbsolutePosition(elementA);
         const {x: x2, y: y2} = getAbsolutePosition(elementB);
         const arrow = document.getElementById(arrowId);
-        arrow.style.width = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) + "px";
+        arrow.style.width = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) - 10 + "px";
         arrow.style.left = x1 + "px";
         arrow.style.top = y1 + "px";
         arrow.style.transform = "rotate(" + Math.atan2((y2 - y1), x2 - x1) + "rad)";
@@ -564,8 +564,9 @@ const layer0IdMatrix = [
         }
         const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
         setCaculator(0,[getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result]);
-        drawArrow(arrowIds[0],"red",matrixIdA, caculatorIdMatrix[0][2]);
-        drawArrow(arrowIds[1],"red",matrixIdB, caculatorIdMatrix[0][4]);
+        drawArrow(arrowIds[0],"orange",resultMatrixId, caculatorIdMatrix[0][0]);
+        drawArrow(arrowIds[1],"orange",matrixIdA, caculatorIdMatrix[0][2]);
+        drawArrow(arrowIds[2],"orange",matrixIdB, caculatorIdMatrix[0][4]);
         await sleep(animationDelay);
     }
 
@@ -575,8 +576,8 @@ const layer0IdMatrix = [
         }
         const result = 1 / (1 + Math.exp(getValue(resultMatrixId)))
         setCaculator(1,["1 / (1 + " , "Math.exp(",getValue(resultMatrixId),") =",result]);
-        drawArrow(arrowIds[2],"red",caculatorIdMatrix[0][6], caculatorIdMatrix[1][2]);
-        drawArrow(arrowIds[3],"green",caculatorIdMatrix[1][4], resultMatrixId)
+        drawArrow(arrowIds[3],"orange",caculatorIdMatrix[0][6], caculatorIdMatrix[1][2]);
+        drawArrow(arrowIds[4],"red",caculatorIdMatrix[1][4], resultMatrixId)
         await sleep(animationDelay);
     }
 
@@ -588,9 +589,9 @@ const layer0IdMatrix = [
         const labelValue = getValue(labelId);
         const outputDeltaValue = 0.2 * (resultValue - labelValue);
         setCaculator(2,["0.2 * (",resultValue,"-",labelValue,") =",outputDeltaValue]);
-        drawArrow(arrowIds[5],"red",outputId, caculatorIdMatrix[2][1]);
-        drawArrow(arrowIds[6],"red",labelId, caculatorIdMatrix[2][3]);
-        drawArrow(arrowIds[7],"green",caculatorIdMatrix[2][5], outputDeltaId);
+        drawArrow(arrowIds[5],"orange",outputId, caculatorIdMatrix[2][1]);
+        drawArrow(arrowIds[6],"orange",labelId, caculatorIdMatrix[2][3]);
+        drawArrow(arrowIds[7],"red",caculatorIdMatrix[2][5], outputDeltaId);
         await sleep(animationDelay);
     }
 
@@ -604,12 +605,12 @@ const layer0IdMatrix = [
         const upperLayerValue = getValue(upperLayerId);
         const newWeightValue = weightValue +  (learnRate * -1) * deltaValue * upperLayerValue * layerValue * (1 - layerValue);
         setCaculator(3,[weightValue,"+ ("+learnRate," * -1) *",deltaValue,"*",upperLayerValue,"*",layerValue,"* (1 -",layerValue,") =", newWeightValue]);
-        drawArrow(arrowIds[0],"red",weightId, caculatorIdMatrix[3][0]);
-        drawArrow(arrowIds[1],"red",deltaId, caculatorIdMatrix[3][3]);
-        drawArrow(arrowIds[2],"red",upperLayerId, caculatorIdMatrix[3][5]);
-        drawArrow(arrowIds[3],"red",layerId, caculatorIdMatrix[3][7]);
-        drawArrow(arrowIds[4],"red",layerId, caculatorIdMatrix[3][9]);
-        drawArrow(arrowIds[5],"green",caculatorIdMatrix[3][11], weightId);
+        drawArrow(arrowIds[0],"orange",weightId, caculatorIdMatrix[3][0]);
+        drawArrow(arrowIds[1],"orange",deltaId, caculatorIdMatrix[3][3]);
+        drawArrow(arrowIds[2],"orange",upperLayerId, caculatorIdMatrix[3][5]);
+        drawArrow(arrowIds[3],"orange",layerId, caculatorIdMatrix[3][7]);
+        drawArrow(arrowIds[4],"orange",layerId, caculatorIdMatrix[3][9]);
+        drawArrow(arrowIds[5],"red",caculatorIdMatrix[3][11], weightId);
         await sleep(animationDelay);
     }
 
@@ -622,10 +623,10 @@ const layer0IdMatrix = [
         const upperLayerDelta = getValue(upperLayerDeltaId);
         const newUpperLayerDelta = upperLayerDelta + weightValue * deltaValue;
         setCaculator(4,[upperLayerDelta,"+",weightValue,"*",deltaValue,"=",newUpperLayerDelta]);
-        drawArrow(arrowIds[0],"red", upperLayerDeltaId, caculatorIdMatrix[4][0]);
-        drawArrow(arrowIds[1],"red", weightId, caculatorIdMatrix[4][2]);
-        drawArrow(arrowIds[2],"red", deltaId, caculatorIdMatrix[4][4]);
-        drawArrow(arrowIds[3],"green", caculatorIdMatrix[4][6], upperLayerDeltaId);
+        drawArrow(arrowIds[0],"orange", upperLayerDeltaId, caculatorIdMatrix[4][0]);
+        drawArrow(arrowIds[1],"orange", weightId, caculatorIdMatrix[4][2]);
+        drawArrow(arrowIds[2],"orange", deltaId, caculatorIdMatrix[4][4]);
+        drawArrow(arrowIds[3],"red", caculatorIdMatrix[4][6], upperLayerDeltaId);
         await sleep(animationDelay);
     }
 
@@ -633,7 +634,7 @@ const layer0IdMatrix = [
         if(animationDelay == 0){
             return;
         }
-        drawArrow(arrowIds[0],"green", "screen_"+i+"_"+j, layerId);
+        drawArrow(arrowIds[0],"red", "screen_"+i+"_"+j, layerId);
         await sleep(animationDelay)
     }
     
@@ -783,7 +784,7 @@ const layer0IdMatrix = [
             
         }
         const maxElement = document.getElementById(maxId);
-        maxElement.style.backgroundColor = "red";
+        maxElement.style.backgroundColor = "orange";
     }
 
     async function start(){
