@@ -498,7 +498,7 @@ const layer0IdMatrix = [
         // if(id == "weight0_1_0_0"){
         //     debugger
         // }
-        console.log("setValue id", id)
+        // console.log("setValue id", id)
         const element = document.getElementById(id);
         if (element.className.indexOf("caculator_cell")>=0){
             element.innerText = value;
@@ -559,15 +559,20 @@ const layer0IdMatrix = [
 
 
     async function playMatrixCrossStepAnimation(matrixIdA,matrixIdB,resultMatrixId){
+        if(animationDelay == 0){
+            return;
+        }
         const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
         setCaculator(0,[getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result]);
         drawArrow(arrowIds[0],"red",matrixIdA, caculatorIdMatrix[0][2]);
         drawArrow(arrowIds[1],"red",matrixIdB, caculatorIdMatrix[0][4]);
-        
         await sleep(animationDelay);
     }
 
     async function playActivationFunction‌Animation(resultMatrixId){
+        if(animationDelay == 0){
+            return;
+        }
         const result = 1 / (1 + Math.exp(getValue(resultMatrixId)))
         setCaculator(1,["1 / (1 + " , "Math.exp(",getValue(resultMatrixId),") =",result]);
         drawArrow(arrowIds[2],"red",caculatorIdMatrix[0][6], caculatorIdMatrix[1][2]);
@@ -576,6 +581,9 @@ const layer0IdMatrix = [
     }
 
     async function playOutputDeltaFunction‌Animation(outputId, labelId, outputDeltaId){
+        if(animationDelay == 0){
+            return;
+        }
         const resultValue = getValue(outputId);
         const labelValue = getValue(labelId);
         const outputDeltaValue = 0.2 * (resultValue - labelValue);
@@ -587,6 +595,9 @@ const layer0IdMatrix = [
     }
 
     async function playBackpropagation‌WeightAnimation(weightId, deltaId, upperLayerId,layerId){
+        if(animationDelay == 0){
+            return;
+        }
         const weightValue = getValue(weightId);
         const deltaValue = getValue(deltaId);
         const layerValue = getValue(layerId);
@@ -603,6 +614,9 @@ const layer0IdMatrix = [
     }
 
     async function playBackpropagation‌LayerAnimation(weightId,deltaId,upperLayerDeltaId){
+        if(animationDelay == 0){
+            return;
+        }
         const weightValue = getValue(weightId);
         const deltaValue = getValue(deltaId);
         const upperLayerDelta = getValue(upperLayerDeltaId);
@@ -616,6 +630,9 @@ const layer0IdMatrix = [
     }
 
     async function playPutTrainDataToMatrix(i,j,layerId){
+        if(animationDelay == 0){
+            return;
+        }
         drawArrow(arrowIds[0],"green", "screen_"+i+"_"+j, layerId);
         await sleep(animationDelay)
     }
@@ -783,14 +800,14 @@ const layer0IdMatrix = [
                 const item = dataSet[i];
                 putDataToScreen(item.data, item.label);
                 // 正向传播
-                setProgress("正向推理中")
+                setProgress("训练进度"+t+"/"+2000+"，正向推理中")
                 await putTrainDataToMatrix(item.data, item.labelMatrix);
                 await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
                 await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
                 await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
                 clearArrow();
                 // 反向传播
-                setProgress("反向传播中")
+                setProgress("训练进度"+t+"/"+2000+"，反向传播中")
                 await outputDeltaFunction‌(layer3IdMatrix, labelIdMatrix, delta3IdMatrix);
                 clearArrow();
                 lightUpMaxValue(layer3IdMatrix);
@@ -803,7 +820,7 @@ const layer0IdMatrix = [
             // await sleep(animationDelay);
             if(t % 10 == 0){
                 console.log("第" + t + "次训练完成", new Date());
-                await sleep(animationDelay);
+                await sleep(10);
             }
         }
         // 推理
@@ -813,7 +830,7 @@ const layer0IdMatrix = [
                 
                 putDataToScreen(item.data, item.label);
                 // 正向传播
-                setProgress("正向推理中")
+                setProgress("测试中，正向推理中")
                 await putTrainDataToMatrix(item.data, item.labelMatrix);
                 await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
                 await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
@@ -829,6 +846,9 @@ const layer0IdMatrix = [
     }
     
     async function sleep(ms){
+        if(ms == 0){
+            return;
+        }
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
