@@ -168,7 +168,6 @@
             </tr>
             <tr><td><label>预测值：</label></td><td colspan="2"><label id="predict"></label></td></tr>
             <tr><td><label>正确率：</label></td><td colspan="2"><label id="accuracy"></label></td></tr>
-            <tr><td colspan="3"><button onclick="downloadPreTrainedModel(event)">下载预训练模型</button></td></tr>
             <tr><td colspan="3"><button onclick="downloadWeight(event)">下载模型</button></td></tr>
             <tr><td colspan="3"><label for="file">上传模型</label><input id="file" type="file" accept="application/json" onchange="uploadWeight(event)"></td></tr>
             <tr><td colspan="3"><label id="progress">停止</label></td></tr>
@@ -195,6 +194,7 @@
     </div>
 </body>
 <script src="petite-vue.iife.js"></script>
+<script src="initial-weight.js"></script>
 <script>
 
 const learnRate = 0.2;
@@ -1085,6 +1085,13 @@ const layer0IdMatrix = [
             maxRowCount: maxRowCount,
         }
     ).mount()
+
+    async function loadInitialWeight(){
+        await sleep(1000);
+        loadWeight(initialWeight);
+    }
+
+    loadInitialWeight();
 
     
 </script>
