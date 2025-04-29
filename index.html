@@ -114,7 +114,7 @@
 </head>
 
 <body v-scope v-once>
-    <div><label>每个计算步骤等待的时间(毫秒)：</label>0<input id="animationDelay" type="range" min="0" max="1000" step="1" value="100" onchange="changeAnimationDelay(event)">1000<label id="progress"></label></div>
+    <div><label>每个计算步骤等待的时间(毫秒)：</label>0<input id="animationDelay" type="range" min="0" max="1000" step="1" value="1" onchange="changeAnimationDelay(event)">1000<label id="progress"></label></div>
     <table v-for="(caculatorIds, index) in caculatorIdMatrix">
         <tr>
             <td class="caculator_cell">公式{{index+1}}：</td>
@@ -155,11 +155,13 @@
                 <td><input :id="'delta3_'+index+'_0'" class="matrix delta" type="text" min="0" max="1" step="0.01"></td>
                 <td><input :id="'label_'+index+'_0'" class="matrix label" type="text" min="0" max="1" step="0.01"></td>
             </tr>
-            <table class="screen_table">
-                <tr v-for="(_,row) in 5">
-                    <td v-for="(_,column) in 3"><input :id="'screen_'+row+'_'+column" class="screen" type="checkbox"></td>
-                </tr>
-            </table>
+        </table>
+        <table class="screen_table">
+            <tr v-for="(_,row) in 5">
+                <td v-for="(_,column) in 3"><input :id="'screen_'+row+'_'+column" class="screen" type="checkbox"></td>
+            </tr>
+            <tr><td><label>预测值：</label></td><td colspan="2"><label id="predict"></label></td></tr>
+            <tr><td><label>正确率：</label></td><td colspan="2"><label id="accuracy"></label></td></tr>
         </table>
     </div>
     <div v-for="arrowId in arrowIds" :id="arrowId" class="arrow">
@@ -170,7 +172,7 @@
 <script>
 
 const learnRate = 0.2;
-let animationDelay = 100;
+let animationDelay = 1;
 function changeAnimationDelay(e){
     animationDelay = e.target.value;
 }
@@ -631,6 +633,14 @@ const layer0IdMatrix = [
         await sleep(animationDelay);
     }
 
+    async function playPredictValueAnimation(layer3Id){
+        if(animationDelay == 0){
+            return;
+        }
+        drawArrow(arrowIds[0],"red", layer3Id, "predict");
+        await sleep(animationDelay * 100);
+    }
+
     async function playPutTrainDataToMatrix(i,j,layerId){
         if(animationDelay == 0){
             return;
@@ -790,6 +800,28 @@ const layer0IdMatrix = [
         maxElement.style.backgroundColor = "orange";
     }
 
+    async function getPredictValue(){
+        let maxValue = -Infinity;
+        let maxId = null;
+        let maxIndex = -1;
+        for(let i=0;i<layer3IdMatrix.length;i++){
+            const id = layer3IdMatrix[i][0];
+            const element = document.getElementById(id);
+            element.style.backgroundColor = "white";
+            const value = getValue(id);
+            if(value > maxValue){
+                maxValue = value;
+                maxId = id;
+                maxIndex = i;
+            }
+        }
+        document.getElementById("predict").innerHTML = maxIndex;
+        const maxElement = document.getElementById(maxId);
+        maxElement.style.backgroundColor = "orange";
+        await playPredictValueAnimation(maxId);
+        return maxIndex;
+    }
+
     async function start(){
         await sleep(1000);
         const dataSet = getDataSet();
@@ -800,6 +832,7 @@ const layer0IdMatrix = [
         // console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
         // 训练
         for(let t = 0; t < 2000; t++){
+            let accurate = 0;
             for(let i = 0; i < dataSet.length; i++){
                 const item = dataSet[i];
                 putDataToScreen(item.data, item.label);
@@ -814,13 +847,18 @@ const layer0IdMatrix = [
                 setProgress("训练进度"+t+"/"+2000+"，反向传播中")
                 await outputDeltaFunction‌(layer3IdMatrix, labelIdMatrix, delta3IdMatrix);
                 clearArrow();
-                lightUpMaxValue(layer3IdMatrix);
+                const predictValue = await getPredictValue();
+                if(String(predictValue) == item.label){
+                    accurate++;
+                }
                 lightUpMaxValue(labelIdMatrix);
+                clearArrow();
                 await backpropagation‌(learnRate, weight2_3IdMatrix, delta3IdMatrix, layer3IdMatrix, layer2IdMatrix, delta2IdMatrix);
                 await backpropagation‌(learnRate, weight1_2IdMatrix, delta2IdMatrix, layer2IdMatrix, layer1IdMatrix, delta1IdMatrix);
                 await backpropagation‌(learnRate, weight0_1IdMatrix, delta1IdMatrix, layer1IdMatrix, layer0IdMatrix);
                 clearArrow();
             }
+            document.getElementById("accuracy").innerHTML = (accurate * 100 / dataSet.length ).toFixed(2)+"%";
             // await sleep(animationDelay);
             if(t % 10 == 0){
                 console.log("第" + t + "次训练完成", new Date());
