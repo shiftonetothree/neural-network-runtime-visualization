@@ -63,88 +63,117 @@
         tfoot td {
             font-weight: bold;
         }
+
+        .caculator_cell{
+            width: 80px;
+            max-width: 80px;
+            min-width: 80px;
+            overflow: hidden;
+            height: 15px;
+            border: 1px solid rgb(160 160 160);
+            text-align: center;
+        }
+
+        .arrow{
+            background-color: red;
+            position: absolute;
+            height: 6px;
+            transform-origin: left center;
+        }
+        .arrow_top{
+            position: absolute;
+            top: -3px;
+            right: 0;
+            transform: rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background-color: red;;
+            transform-origin: center;
+        }
+        .matrix_container{
+            display: inline-flex;
+            align-items: top;
+        }
+        .matrix_container table{
+            display: inline-flex;
+        }
+
+        .layer{
+            background-color: rgba(0, 183, 255, 0.2);
+        }
+        .weight{
+            background-color: rgba(0, 183, 255, 0.5);
+        }
+        .delta{
+            background-color: rgba(0, 94, 255, 0.8);
+        }
+        .label{
+            background-color: rgba(0, 183, 255, 0.8);
+        }
     </style>
 </head>
 
 <body v-scope v-once>
-    <table class="screen_table">
-        <tr v-for="(_,row) in 5">
-            <td v-for="(_,column) in 3"><input :id="'screen_'+row+'_'+column" class="screen" type="checkbox"></td>
-        </tr>
-    </table>
-
-    <table>
+    <div><label>每个计算步骤等待的时间(毫秒)：</label>0<input id="animationDelay" type="range" min="0" max="1000" step="1" value="1000" onchange="changeAnimationDelay(event)">1000<label id="progress"></label></div>
+    <table v-for="(caculatorIds, index) in caculatorIdMatrix">
         <tr>
-            <td id="computer1_a"></td>
-            <td id="computer1_b"></td>
-            <td id="computer1_c"></td>
-            <td id="computer1_d"></td>
-            <td id="computer1_e"></td>
-            <td id="computer1_f"></td>
-            <td id="computer1_g"></td>
-            <td id="computer1_h"></td>
-            <td id="computer1_i"></td>
-            <td id="computer1_j"></td>
-            <td id="computer1_k"></td>
+            <td class="caculator_cell">公式{{index+1}}：</td>
+            <td v-for="id in caculatorIds" :id="id" class="caculator_cell"></td>
         </tr>
     </table>
-
-    <table>
-        <tr>
-            <td id="computer2_a"></td>
-            <td id="computer2_b"></td>
-            <td id="computer2_c"></td>
-            <td id="computer2_d"></td>
-            <td id="computer2_e"></td>
-            <td id="computer2_f"></td>
-            <td id="computer2_g"></td>
-            <td id="computer2_h"></td>
-            <td id="computer2_i"></td>
-            <td id="computer2_j"></td>
-            <td id="computer2_k"></td>
-        </tr>
-    </table>
-
-    <table class="matrix_table">
-        <tr v-for="(id,index) in layer0IdMatrix">
-            <td v-if="index == 0" :colspan="maxColumnCount" :rowspan="maxRowCount"></td>
-            <td>|-|</td>
-            <td><input :id="id" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-        </tr>
-        <tr><td>--</td></tr>
-        <tr v-for="(row,index) in weight0_1IdMatrix">
-            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-            <td>|-|</td>
-            <td><input :id="'layer1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-            <td>|-|</td>
-            <td><input :id="'delta1_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
-        </tr>
-        <tr><td>--</td></tr>
-        <tr v-for="(row,index) in weight1_2IdMatrix">
-            <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight1_2IdMatrix.length"></td>
-            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-            <td>|-|</td>
-            <td><input :id="'layer2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-            <td>|-|</td>
-            <td><input :id="'delta2_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
-        </tr>
-        <tr><td>--</td></tr>
-        <tr v-for="(row,index) in weight2_3IdMatrix">
-            <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
-            <td v-for="cell in row"><input :id="cell" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-            <td>|-|</td>
-            <td><input :id="'layer3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
-            <td>|-|</td>
-            <td><input :id="'delta3_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
-            <td><input :id="'label_'+index+'_0'" class="matrix" type="text" min="0" max="1" step="0.01"></td>
-        </tr>
-
-    </table>
+    <div class="matrix_container">
+        <table class="matrix_table">
+            <tr v-for="(id,index) in layer0IdMatrix">
+                <td v-if="index == 0" :colspan="maxColumnCount" :rowspan="maxRowCount"></td>
+                <td>|-|</td>
+                <td><input :id="id" class="matrix layer" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+            </tr>
+            <tr><td>--</td></tr>
+            <tr v-for="(row,index) in weight0_1IdMatrix">
+                <td v-for="cell in row"><input :id="cell" class="matrix weight" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+                <td>|-|</td>
+                <td><input :id="'layer1_'+index+'_0'" class="matrix layer" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+                <td>|-|</td>
+                <td><input :id="'delta1_'+index+'_0'" class="matrix delta" type="text" min="0" max="1" step="0.01"></td>
+            </tr>
+            <tr><td>--</td></tr>
+            <tr v-for="(row,index) in weight1_2IdMatrix">
+                <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight1_2IdMatrix.length"></td>
+                <td v-for="cell in row"><input :id="cell" class="matrix weight" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+                <td>|-|</td>
+                <td><input :id="'layer2_'+index+'_0'" class="matrix layer" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+                <td>|-|</td>
+                <td><input :id="'delta2_'+index+'_0'" class="matrix delta" type="text" min="0" max="1" step="0.01"></td>
+            </tr>
+            <tr><td>--</td></tr>
+            <tr v-for="(row,index) in weight2_3IdMatrix">
+                <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
+                <td v-for="cell in row"><input :id="cell" class="matrix weight" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+                <td>|-|</td>
+                <td><input :id="'layer3_'+index+'_0'" class="matrix layer" type="text" min="0" max="1" step="0.01" :value="Math.random() - 0.5"></td>
+                <td>|-|</td>
+                <td><input :id="'delta3_'+index+'_0'" class="matrix delta" type="text" min="0" max="1" step="0.01"></td>
+                <td><input :id="'label_'+index+'_0'" class="matrix label" type="text" min="0" max="1" step="0.01"></td>
+            </tr>
+            <table class="screen_table">
+                <tr v-for="(_,row) in 5">
+                    <td v-for="(_,column) in 3"><input :id="'screen_'+row+'_'+column" class="screen" type="checkbox"></td>
+                </tr>
+            </table>
+        </table>
+    </div>
+    <div v-for="arrowId in arrowIds" :id="arrowId" class="arrow">
+        <div class="arrow_top"></div>
+    </div>
 </body>
 <script src="petite-vue.iife.js"></script>
 <script>
 
 const learnRate = 0.2;
+let animationDelay = 1000;
+function changeAnimationDelay(e){
+    animationDelay = e.target.value;
+}
 const dataSet = [
     {
         data: [
@@ -426,6 +455,25 @@ const layer0IdMatrix = [
         ["delta3_8_0"],
         ["delta3_9_0"]
     ]
+
+    const caculatorIdMatrix = [
+        ["caculator0_0", "caculator0_1", "caculator0_2", "caculator0_3", "caculator0_4", "caculator0_5", "caculator0_6", "caculator0_7", "caculator0_8", "caculator0_9", "caculator0_10", "caculator0_11", "caculator0_12", "caculator0_13", "caculator0_14"],
+        ["caculator1_0", "caculator1_1", "caculator1_2", "caculator1_3", "caculator1_4", "caculator1_5", "caculator1_6", "caculator1_7", "caculator1_8", "caculator1_9", "caculator1_10", "caculator1_11", "caculator1_12", "caculator1_13", "caculator1_14"],
+        ["caculator2_0", "caculator2_1", "caculator2_2", "caculator2_3", "caculator2_4", "caculator2_5", "caculator2_6", "caculator2_7", "caculator2_8", "caculator2_9", "caculator2_10", "caculator2_11", "caculator2_12", "caculator2_13", "caculator2_14"],
+        ["caculator3_0", "caculator3_1", "caculator3_2", "caculator3_3", "caculator3_4", "caculator3_5", "caculator3_6", "caculator3_7", "caculator3_8", "caculator3_9", "caculator3_10", "caculator3_11", "caculator3_12", "caculator3_13", "caculator3_14"],
+        ["caculator4_0", "caculator4_1", "caculator4_2", "caculator4_3", "caculator4_4", "caculator4_5", "caculator4_6", "caculator4_7", "caculator4_8", "caculator4_9", "caculator4_10", "caculator4_11", "caculator4_12", "caculator4_13", "caculator4_14"],
+    ]
+
+    const arrowIds = [
+        "arrow0",
+        "arrow1",
+        "arrow2",
+        "arrow3",
+        "arrow4",
+        "arrow5",
+        "arrow6",
+        "arrow7",
+    ]
     const maxColumnCount = Math.max(
         weight0_1IdMatrix[0].length, weight1_2IdMatrix[0].length, weight2_3IdMatrix[0].length
     );
@@ -450,9 +498,11 @@ const layer0IdMatrix = [
         // if(id == "weight0_1_0_0"){
         //     debugger
         // }
-        // console.log("setValue id", id)
+        console.log("setValue id", id)
         const element = document.getElementById(id);
-        if(element.type == "checkbox"){
+        if (element.className.indexOf("caculator_cell")>=0){
+            element.innerText = value;
+        }else if(element.type == "checkbox"){
             return element.checked = value;
         }else{
             return element.value = value;
@@ -460,61 +510,114 @@ const layer0IdMatrix = [
         
     }
 
-    function setComputer1(a,b,c,d,e,f,g,h,i,j,k){
-        document.getElementById("computer1_a").innerHTML = a != null ? a : "";
-        document.getElementById("computer1_b").innerHTML = b != null ? b : "";
-        document.getElementById("computer1_c").innerHTML = c != null ? c : "";
-        document.getElementById("computer1_d").innerHTML = d != null ? d : "";
-        document.getElementById("computer1_e").innerHTML = e != null ? e : "";
-        document.getElementById("computer1_f").innerHTML = f != null ? f : "";
-        document.getElementById("computer1_g").innerHTML = g != null ? g : "";
-        document.getElementById("computer1_h").innerHTML = h != null ? h : "";
-        document.getElementById("computer1_i").innerHTML = i != null ? i : "";
-        document.getElementById("computer1_j").innerHTML = j != null ? j : "";
-        document.getElementById("computer1_k").innerHTML = k != null ? k : "";
+    function setCaculator(row, cells){
+        for(let i = 0; i < cells.length; i++){
+            const cell = cells[i];
+            const id = "caculator" + row + "_" + (i);
+            setValue(id, cell);
+        }
     }
 
-    function setComputer2(a,b,c,d,e,f,g,h,i,j,k){
-        document.getElementById("computer2_a").innerHTML = a != null ? a : "";
-        document.getElementById("computer2_b").innerHTML = b != null ? b : "";
-        document.getElementById("computer2_c").innerHTML = c != null ? c : "";
-        document.getElementById("computer2_d").innerHTML = d != null ? d : "";
-        document.getElementById("computer2_e").innerHTML = e != null ? e : "";
-        document.getElementById("computer2_f").innerHTML = f != null ? f : "";
-        document.getElementById("computer2_g").innerHTML = g != null ? g : "";
-        document.getElementById("computer2_h").innerHTML = h != null ? h : "";
-        document.getElementById("computer2_i").innerHTML = i != null ? i : "";
-        document.getElementById("computer2_j").innerHTML = j != null ? j : "";
-        document.getElementById("computer2_k").innerHTML = k != null ? k : "";
-        
+    function setProgress(progress){
+        document.getElementById("progress").innerHTML = progress;
     }
+
+    function getAbsolutePosition(element) {
+        let x = 0, y = 0;
+        let current = element;
+        while (current) {
+            x += current.offsetLeft;
+            y += current.offsetTop;
+            current = current.offsetParent;
+        }
+        return { x: x + 10, y: y + 10 };
+    }
+
+    /** 绘制一个从一个元素到另一个元素的直线 */
+    function drawArrow(arrowId, color ,elementIdA,elementIdB){
+        const elementA = document.getElementById(elementIdA);
+        const elementB = document.getElementById(elementIdB);
+        const {x: x1, y: y1} = getAbsolutePosition(elementA);
+        const {x: x2, y: y2} = getAbsolutePosition(elementB);
+        const arrow = document.getElementById(arrowId);
+        arrow.style.width = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) + "px";
+        arrow.style.left = x1 + "px";
+        arrow.style.top = y1 + "px";
+        arrow.style.transform = "rotate(" + Math.atan2((y2 - y1), x2 - x1) + "rad)";
+        arrow.style.backgroundColor = color;
+        arrow.style.display = "block";
+        arrow.children.item(0).style.backgroundColor = color;
+    }
+
+    function clearArrow(arrowId){
+        for(let i = 0;i<arrowIds.length;i++){
+            const arrowId = arrowIds[i];
+            const arrow = document.getElementById(arrowId);
+            arrow.style.display = "none";
+        }
+    }
+
 
     async function playMatrixCrossStepAnimation(matrixIdA,matrixIdB,resultMatrixId){
         const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
-        setComputer1(getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result);
-        // await sleep(14);
+        setCaculator(0,[getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result]);
+        drawArrow(arrowIds[0],"red",matrixIdA, caculatorIdMatrix[0][2]);
+        drawArrow(arrowIds[1],"red",matrixIdB, caculatorIdMatrix[0][4]);
+        
+        await sleep(animationDelay);
     }
 
     async function playActivationFunction‌Animation(resultMatrixId){
         const result = 1 / (1 + Math.exp(getValue(resultMatrixId)))
-        setComputer2("1 / (1 + Math.exp(",getValue(resultMatrixId),")","=",result);
-        // await sleep(14);
-    }
-    
-    function clearComputer1(){
-        try{
-            setComputer1("","","","","","","");
-        }catch (e){
-            console.warn(e);
-        }
+        setCaculator(1,["1 / (1 + " , "Math.exp(",getValue(resultMatrixId),") =",result]);
+        drawArrow(arrowIds[2],"red",caculatorIdMatrix[0][6], caculatorIdMatrix[1][2]);
+        drawArrow(arrowIds[3],"green",caculatorIdMatrix[1][4], resultMatrixId)
+        await sleep(animationDelay);
     }
 
-    function clearComputer2(){
-        try{
-            setComputer2("","","","","","","");
-        }catch (e){
-            console.warn(e);
-        }
+    async function playOutputDeltaFunction‌Animation(outputId, labelId, outputDeltaId){
+        const resultValue = getValue(outputId);
+        const labelValue = getValue(labelId);
+        const outputDeltaValue = 0.2 * (resultValue - labelValue);
+        setCaculator(2,["0.2 * (",resultValue,"-",labelValue,") =",outputDeltaValue]);
+        drawArrow(arrowIds[5],"red",outputId, caculatorIdMatrix[2][1]);
+        drawArrow(arrowIds[6],"red",labelId, caculatorIdMatrix[2][3]);
+        drawArrow(arrowIds[7],"green",caculatorIdMatrix[2][5], outputDeltaId);
+        await sleep(animationDelay);
+    }
+
+    async function playBackpropagation‌WeightAnimation(weightId, deltaId, upperLayerId,layerId){
+        const weightValue = getValue(weightId);
+        const deltaValue = getValue(deltaId);
+        const layerValue = getValue(layerId);
+        const upperLayerValue = getValue(upperLayerId);
+        const newWeightValue = weightValue +  (learnRate * -1) * deltaValue * upperLayerValue * layerValue * (1 - layerValue);
+        setCaculator(3,[weightValue,"+ ("+learnRate," * -1) *",deltaValue,"*",upperLayerValue,"*",layerValue,"* (1 -",layerValue,") =", newWeightValue]);
+        drawArrow(arrowIds[0],"red",weightId, caculatorIdMatrix[3][0]);
+        drawArrow(arrowIds[1],"red",deltaId, caculatorIdMatrix[3][3]);
+        drawArrow(arrowIds[2],"red",upperLayerId, caculatorIdMatrix[3][5]);
+        drawArrow(arrowIds[3],"red",layerId, caculatorIdMatrix[3][7]);
+        drawArrow(arrowIds[4],"red",layerId, caculatorIdMatrix[3][9]);
+        drawArrow(arrowIds[5],"green",caculatorIdMatrix[3][11], weightId);
+        await sleep(animationDelay);
+    }
+
+    async function playBackpropagation‌LayerAnimation(weightId,deltaId,upperLayerDeltaId){
+        const weightValue = getValue(weightId);
+        const deltaValue = getValue(deltaId);
+        const upperLayerDelta = getValue(upperLayerDeltaId);
+        const newUpperLayerDelta = upperLayerDelta + weightValue * deltaValue;
+        setCaculator(4,[upperLayerDelta,"+",weightValue,"*",deltaValue,"=",newUpperLayerDelta]);
+        drawArrow(arrowIds[0],"red", upperLayerDeltaId, caculatorIdMatrix[4][0]);
+        drawArrow(arrowIds[1],"red", weightId, caculatorIdMatrix[4][2]);
+        drawArrow(arrowIds[2],"red", deltaId, caculatorIdMatrix[4][4]);
+        drawArrow(arrowIds[3],"green", caculatorIdMatrix[4][6], upperLayerDeltaId);
+        await sleep(animationDelay);
+    }
+
+    async function playPutTrainDataToMatrix(i,j,layerId){
+        drawArrow(arrowIds[0],"green", "screen_"+i+"_"+j, layerId);
+        await sleep(animationDelay)
     }
     
     /** 激活函数和矩阵乘法的复合Sigmod(AB) */
@@ -571,13 +674,14 @@ const layer0IdMatrix = [
         }
     }
 
-    function putTrainDataToMatrix(data, labelMatrix){
+    async function putTrainDataToMatrix(data, labelMatrix){
         let m = 0;
         for(let i = 0; i < data.length; i++){
             const row = data[i];
             for(let j = 0; j< row.length; j++){
                 const value = row[j];
                 const layer0Id = "layer0_" + m + "_0";
+                await playPutTrainDataToMatrix(i,j,layer0Id);
                 setValue(layer0Id, value);
                 m++;
             }
@@ -598,9 +702,9 @@ const layer0IdMatrix = [
             const resultValue = getValue(outputId);
             const labelValue = getValue(labelId);
             const outputDeltaValue = 0.2 * (resultValue - labelValue);
-            setComputer1("0.2","* (",resultValue,"-",labelValue,") =",outputDeltaValue);
+            await playOutputDeltaFunction‌Animation(outputId, labelId, outputDeltaId)
             setValue(outputDeltaId, outputDeltaValue);
-            // await sleep(14);
+            await sleep(animationDelay);
         }
     }
 
@@ -621,15 +725,14 @@ const layer0IdMatrix = [
                 //     debugger
                     
                 // }
-                setComputer1(weightValue,"+(",learnRate,"* -1) *",deltaValue,"*",upperLayerValue,"*",layerValue,"* (1 -",layerValue,")","=",newWeightValue);
+                await playBackpropagation‌WeightAnimation(weightId, deltaId, upperLayerId, layerId);
                 setValue(weightId, newWeightValue);
-                
-                // await sleep(14);
             }
         }
         if(!upperLayerDeltaIdMatrix){
             return;
         }
+        clearArrow();
         // 输出上一层的神经元的需要修改的量
         for(let i=0;i<upperLayerDeltaIdMatrix.length;i++){
             const upperLayerDeltaId = upperLayerDeltaIdMatrix[i][0];
@@ -641,11 +744,9 @@ const layer0IdMatrix = [
                 const deltaValue = getValue(deltaId);
                 const upperLayerDelta = getValue(upperLayerDeltaId);
                 const newUpperLayerDelta = upperLayerDelta + weightValue * deltaValue;
-                setComputer2(upperLayerDelta,"+",weightValue,"*",deltaValue,"=",newUpperLayerDelta);
+                await playBackpropagation‌LayerAnimation(weightId,deltaId,upperLayerDeltaId);
                 setValue(upperLayerDeltaId, newUpperLayerDelta);
-                // await sleep(14);
             }
-            // await sleep(14);
         }
         
     }
@@ -680,44 +781,51 @@ const layer0IdMatrix = [
         for(let t = 0; t < 2000; t++){
             for(let i = 0; i < dataSet.length; i++){
                 const item = dataSet[i];
-                clearComputer1();
                 putDataToScreen(item.data, item.label);
                 // 正向传播
-                putTrainDataToMatrix(item.data, item.labelMatrix);
+                setProgress("正向推理中")
+                await putTrainDataToMatrix(item.data, item.labelMatrix);
                 await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
                 await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
                 await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+                clearArrow();
                 // 反向传播
+                setProgress("反向传播中")
                 await outputDeltaFunction‌(layer3IdMatrix, labelIdMatrix, delta3IdMatrix);
+                clearArrow();
                 lightUpMaxValue(layer3IdMatrix);
                 lightUpMaxValue(labelIdMatrix);
                 await backpropagation‌(learnRate, weight2_3IdMatrix, delta3IdMatrix, layer3IdMatrix, layer2IdMatrix, delta2IdMatrix);
                 await backpropagation‌(learnRate, weight1_2IdMatrix, delta2IdMatrix, layer2IdMatrix, layer1IdMatrix, delta1IdMatrix);
                 await backpropagation‌(learnRate, weight0_1IdMatrix, delta1IdMatrix, layer1IdMatrix, layer0IdMatrix);
+                clearArrow();
             }
-            // await sleep(14);
+            // await sleep(animationDelay);
             if(t % 10 == 0){
                 console.log("第" + t + "次训练完成", new Date());
-                await sleep(100);
+                await sleep(animationDelay);
             }
         }
         // 推理
         for(let t = 0; ; t++){
             for(let i = 0; i < dataSet.length; i++){
                 const item = dataSet[i];
-                clearComputer1();
+                
                 putDataToScreen(item.data, item.label);
                 // 正向传播
-                putTrainDataToMatrix(item.data, item.labelMatrix);
+                setProgress("正向推理中")
+                await putTrainDataToMatrix(item.data, item.labelMatrix);
                 await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
                 await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
                 await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+                clearArrow();
                 lightUpMaxValue(layer3IdMatrix);
                 lightUpMaxValue(labelIdMatrix);
                 await sleep(1000)
                 console.log("第" + (t * 10 + i) + "次测试完成", new Date());
             }
         }
+        
     }
     
     async function sleep(ms){
@@ -733,6 +841,8 @@ const layer0IdMatrix = [
             layer2IdMatrix : layer2IdMatrix,
             weight2_3IdMatrix : weight2_3IdMatrix,
             layer3IdMatrix : layer3IdMatrix,
+            caculatorIdMatrix: caculatorIdMatrix,
+            arrowIds: arrowIds,
 
             maxColumnCount: maxColumnCount,
             maxRowCount: maxRowCount,
