@@ -110,6 +110,12 @@
         .label{
             background-color: rgba(0, 183, 255, 0.8);
         }
+        #file{
+            width: 72px;
+        }
+        #trainTimes{
+            width: 80px;
+        }
     </style>
 </head>
 
@@ -157,11 +163,24 @@
             </tr>
         </table>
         <table class="screen_table">
-            <tr v-for="(_,row) in 5">
-                <td v-for="(_,column) in 3"><input :id="'screen_'+row+'_'+column" class="screen" type="checkbox"></td>
+            <tr><td colspan="3">图像输入板：</td></tr>
+            <tr v-for="row in screenIdMatrix">
+                <td v-for="id in row"><input :id="id" class="screen" type="checkbox"></td>
             </tr>
             <tr><td><label>预测值：</label></td><td colspan="2"><label id="predict"></label></td></tr>
             <tr><td><label>正确率：</label></td><td colspan="2"><label id="accuracy"></label></td></tr>
+            <tr><td colspan="3"><button onclick="downloadPreTrainedModel(event)">下载预训练模型</button></td></tr>
+            <tr><td colspan="3"><button onclick="downloadWeight(event)">下载模型</button></td></tr>
+            <tr><td colspan="3"><label for="file">上传模型</label><input id="file" type="file" accept="application/json" onchange="uploadWeight(event)"></td></tr>
+            <tr>
+                <td colspan="2"><label for="trainTimes">次数：</label><input id="trainTimes" type="number" value="2000"></td>
+                <td><button onclick="train()">开始训练</button></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button onclick="pauseTrain()">尽快暂停训练</button></td>
+                <td><button onclick="pauseTrain()">停止训练</button></td>
+            </tr>
+            <tr><td colspan="3"><button onclick="test()">运行模型</button></td></tr>
         </table>
     </div>
     <div v-for="arrowId in arrowIds" :id="arrowId" class="arrow">
@@ -173,6 +192,9 @@
 
 const learnRate = 0.2;
 let animationDelay = 1;
+let trainTimes = 2000;
+let t = 0;
+let trainPaused = false;
 function changeAnimationDelay(e){
     animationDelay = e.target.value;
 }
@@ -308,6 +330,14 @@ const dataSet = [
         ]
     }
 ];
+
+const screenIdMatrix = [
+    ["screen_0_0", "screen_0_1", "screen_0_3"],
+    ["screen_1_0", "screen_1_1", "screen_1_3"],
+    ["screen_2_0", "screen_2_1", "screen_2_3"],
+    ["screen_3_0", "screen_3_1", "screen_3_3"],
+    ["screen_4_0", "screen_4_1", "screen_4_3"],
+]
 
 const layer0IdMatrix = [
         ["layer0_0_0"],
@@ -459,11 +489,11 @@ const layer0IdMatrix = [
     ]
 
     const caculatorIdMatrix = [
-        ["caculator0_0", "caculator0_1", "caculator0_2", "caculator0_3", "caculator0_4", "caculator0_5", "caculator0_6", "caculator0_7", "caculator0_8", "caculator0_9", "caculator0_10", "caculator0_11", "caculator0_12", "caculator0_13", "caculator0_14"],
-        ["caculator1_0", "caculator1_1", "caculator1_2", "caculator1_3", "caculator1_4", "caculator1_5", "caculator1_6", "caculator1_7", "caculator1_8", "caculator1_9", "caculator1_10", "caculator1_11", "caculator1_12", "caculator1_13", "caculator1_14"],
-        ["caculator2_0", "caculator2_1", "caculator2_2", "caculator2_3", "caculator2_4", "caculator2_5", "caculator2_6", "caculator2_7", "caculator2_8", "caculator2_9", "caculator2_10", "caculator2_11", "caculator2_12", "caculator2_13", "caculator2_14"],
-        ["caculator3_0", "caculator3_1", "caculator3_2", "caculator3_3", "caculator3_4", "caculator3_5", "caculator3_6", "caculator3_7", "caculator3_8", "caculator3_9", "caculator3_10", "caculator3_11", "caculator3_12", "caculator3_13", "caculator3_14"],
-        ["caculator4_0", "caculator4_1", "caculator4_2", "caculator4_3", "caculator4_4", "caculator4_5", "caculator4_6", "caculator4_7", "caculator4_8", "caculator4_9", "caculator4_10", "caculator4_11", "caculator4_12", "caculator4_13", "caculator4_14"],
+        ["caculator0_0", "caculator0_1", "caculator0_2", "caculator0_3", "caculator0_4", "caculator0_5", "caculator0_6", "caculator0_7", "caculator0_8", "caculator0_9", "caculator0_10", "caculator0_11"],
+        ["caculator1_0", "caculator1_1", "caculator1_2", "caculator1_3", "caculator1_4", "caculator1_5", "caculator1_6", "caculator1_7", "caculator1_8", "caculator1_9", "caculator1_10", "caculator1_11"],
+        ["caculator2_0", "caculator2_1", "caculator2_2", "caculator2_3", "caculator2_4", "caculator2_5", "caculator2_6", "caculator2_7", "caculator2_8", "caculator2_9", "caculator2_10", "caculator2_11"],
+        ["caculator3_0", "caculator3_1", "caculator3_2", "caculator3_3", "caculator3_4", "caculator3_5", "caculator3_6", "caculator3_7", "caculator3_8", "caculator3_9", "caculator3_10", "caculator3_11"],
+        ["caculator4_0", "caculator4_1", "caculator4_2", "caculator4_3", "caculator4_4", "caculator4_5", "caculator4_6", "caculator4_7", "caculator4_8", "caculator4_9", "caculator4_10", "caculator4_11"],
     ]
 
     const arrowIds = [
@@ -490,7 +520,7 @@ const layer0IdMatrix = [
         // }
         const element = document.getElementById(id);
         if(element.type == "checkbox"){
-            return parseFloat(element.checked);
+            return element.checked;
         }else{
             return parseFloat(element.value);
         }
@@ -565,7 +595,7 @@ const layer0IdMatrix = [
             return;
         }
         const result = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
-        setCaculator(0,[getValue(resultMatrixId),"+",getValue(matrixIdA),"x",getValue(matrixIdB),"=",result]);
+        setCaculator(0,[getValue(resultMatrixId),"+",getValue(matrixIdA),"*",getValue(matrixIdB),"=",result]);
         drawArrow(arrowIds[0],"orange",resultMatrixId, caculatorIdMatrix[0][0]);
         drawArrow(arrowIds[1],"orange",matrixIdA, caculatorIdMatrix[0][2]);
         drawArrow(arrowIds[2],"orange",matrixIdB, caculatorIdMatrix[0][4]);
@@ -648,6 +678,7 @@ const layer0IdMatrix = [
         drawArrow(arrowIds[0],"red", "screen_"+i+"_"+j, layerId);
         await sleep(animationDelay)
     }
+
     
     /** 激活函数和矩阵乘法的复合Sigmod(AB) */
     async function sigmodMatrixCross(matrixIdsA, matrixIdsB, resultMatrixIds) {
@@ -693,15 +724,31 @@ const layer0IdMatrix = [
         return dataSet;
     }
 
-    function putDataToScreen(data,label){
+    function putDataToScreen(data,label,screenIdMatrix){
         for(let i = 0; i < data.length; i++){
             const row = data[i];
             for(let j = 0; j< row.length; j++){
                 const value = row[j];
-                const id = "screen_" + i + "_" + j;
+                const id = screenIdMatrix[i][j];
                 setValue(id, Boolean(value));
             }
+        }
+    }
 
+    async function getDataFromScreen(screenIdMatrix){
+        let m = 0;
+        const data = [];
+        for(let i = 0; i < screenIdMatrix.length; i++){
+            const row = screenIdMatrix[i];
+            for(let j = 0; j< row.length; j++){
+                const id = screenIdMatrix[i][j];
+                const layer0Id = layer0IdMatrix[m][0];
+                const booleanValue = getValue(id);
+                const value = booleanValue ? 1 : 0;
+                await playPutTrainDataToMatrix(i,j,layer0Id);
+                setValue(layer0Id, value);
+                m++;
+            }
         }
     }
 
@@ -711,7 +758,7 @@ const layer0IdMatrix = [
             const row = data[i];
             for(let j = 0; j< row.length; j++){
                 const value = row[j];
-                const layer0Id = "layer0_" + m + "_0";
+                const layer0Id = layer0IdMatrix[m][0];
                 await playPutTrainDataToMatrix(i,j,layer0Id);
                 setValue(layer0Id, value);
                 m++;
@@ -724,6 +771,8 @@ const layer0IdMatrix = [
             setValue(labelMatrixId, value);
         }
     }
+
+    
 
     async function outputDeltaFunction‌(outputIdMatrix, labelIdMatrix, outputDeltaIdMatrix){
         for(let i=0;i<outputIdMatrix.length;i++){
@@ -753,7 +802,7 @@ const layer0IdMatrix = [
                 const upperLayerValue = getValue(upperLayerId);
                 const newWeightValue = weightValue +  (learnRate * -1) * deltaValue * upperLayerValue * layerValue * (1 - layerValue);
                 // if(weightId == "weight0_1_0_0"){
-                //     debugger
+                //     debugge
                     
                 // }
                 await playBackpropagation‌WeightAnimation(weightId, deltaId, upperLayerId, layerId);
@@ -822,8 +871,104 @@ const layer0IdMatrix = [
         return maxIndex;
     }
 
-    async function start(){
-        await sleep(1000);
+    function getMatrixData(matrixId){
+        const matrix = [];
+        for(let i=0;i<matrixId.length;i++){
+            const row = matrixId[i];
+            const rowData = [];
+            for(let j=0;j<row.length;j++){
+                const id = row[j];
+                const value = getValue(id);
+                rowData.push(value);
+            }
+            matrix.push(rowData);
+        }
+        return matrix
+    }
+
+    function setMatrixData(matrixId, data){
+        for(let i=0;i<matrixId.length;i++){
+            const row = matrixId[i];
+            for(let j=0;j<row.length;j++){
+                const id = row[j];
+                const value = data[i][j];
+                setValue(id, value);
+            }
+        }   
+    }
+
+    function downloadPreTrainedModel(){
+        const weight0_1 = getMatrixData(weight0_1IdMatrix);
+        const weight1_2 = getMatrixData(weight1_2IdMatrix);
+        const weight2_3 = getMatrixData(weight2_3IdMatrix);
+        downloadFile(JSON.stringify({
+            weight0_1,
+            weight1_2,
+            weight2_3
+        })); 
+    }
+
+    function downloadWeight(){
+        const weight0_1 = getMatrixData(weight0_1IdMatrix);
+        const weight1_2 = getMatrixData(weight1_2IdMatrix);
+        const weight2_3 = getMatrixData(weight2_3IdMatrix);
+        downloadFile(JSON.stringify({
+            weight0_1,
+            weight1_2,
+            weight2_3
+        })); 
+    }
+
+    async function uploadWeight(event){
+        const files = event.target.files;
+        if(files.length == 0){
+            return;
+        }
+        const file = files[0];
+        event.target.value = ""; // 清空文件选择框
+        const reader = new FileReader(); // 创建读取器
+        return new Promise((resolve, reject)=>{
+
+        
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const weight = JSON.parse(content);
+                try{
+                    loadWeight(weight);
+                    confirm("权重加载成功");
+                }catch(error){
+                    alert("权重加载失败")
+                    reject("文件格式错误")
+                }
+            };
+            reader.onerror = reject; // 错误处理
+            reader.readAsText(file); // 读取为文本
+        });
+    }
+
+    function loadWeight(weight){
+        const {
+            weight0_1,
+            weight1_2,
+            weight2_3
+        } = weight;
+        setMatrixData(weight0_1IdMatrix, weight0_1);
+        setMatrixData(weight1_2IdMatrix, weight1_2);
+        setMatrixData(weight2_3IdMatrix, weight2_3);
+    }
+
+    function downloadFile(text) {
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "weight.json"; // 设置文件名
+        a.click();
+        URL.revokeObjectURL(url); // 释放内存
+    }
+
+    async function train(){
+        trainTimes = getValue("trainTimes");
         const dataSet = getDataSet();
         // setValue(weight0_1IdMatrix[0][0], 1);
         // for(let i=0;i<1000;i++){
@@ -831,20 +976,26 @@ const layer0IdMatrix = [
         // }
         // console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
         // 训练
-        for(let t = 0; t < 2000; t++){
+        for(; t < trainTimes; t++){
+            if(trainPaused){
+                break;
+            }
             let accurate = 0;
             for(let i = 0; i < dataSet.length; i++){
+                if(trainPaused){
+                    break;
+                }
                 const item = dataSet[i];
-                putDataToScreen(item.data, item.label);
+                putDataToScreen(item.data, item.label, screenIdMatrix);
                 // 正向传播
-                setProgress("训练进度"+t+"/"+2000+"，正向推理中")
+                setProgress("训练进度"+t+"/"+trainTimes+"，正向推理中")
                 await putTrainDataToMatrix(item.data, item.labelMatrix);
                 await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
                 await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
                 await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
                 clearArrow();
                 // 反向传播
-                setProgress("训练进度"+t+"/"+2000+"，反向传播中")
+                setProgress("训练进度"+t+"/"+trainTimes+"，反向传播中")
                 await outputDeltaFunction‌(layer3IdMatrix, labelIdMatrix, delta3IdMatrix);
                 clearArrow();
                 const predictValue = await getPredictValue();
@@ -865,26 +1016,28 @@ const layer0IdMatrix = [
                 await sleep(10);
             }
         }
-        // 推理
-        for(let t = 0; ; t++){
-            for(let i = 0; i < dataSet.length; i++){
-                const item = dataSet[i];
-                
-                putDataToScreen(item.data, item.label);
-                // 正向传播
-                setProgress("测试中，正向推理中")
-                await putTrainDataToMatrix(item.data, item.labelMatrix);
-                await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
-                await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
-                await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
-                clearArrow();
-                lightUpMaxValue(layer3IdMatrix);
-                lightUpMaxValue(labelIdMatrix);
-                await sleep(1000)
-                console.log("第" + (t * 10 + i) + "次测试完成", new Date());
-            }
-        }
-        
+    }
+
+    async function pauseTrain(){
+        trainPaused = true;
+    }
+
+    async function stopTrain(){
+        trainPaused = true;
+        t = 0;
+    }
+
+    async function test(){
+        // 正向传播
+        setProgress("测试中，正向推理中")
+        await getDataFromScreen(screenIdMatrix);
+        await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
+        await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
+        await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
+        clearArrow();
+        const predictValue = await getPredictValue();
+        lightUpMaxValue(labelIdMatrix);
+        clearArrow();
     }
     
     async function sleep(ms){
@@ -910,8 +1063,6 @@ const layer0IdMatrix = [
             maxRowCount: maxRowCount,
         }
     ).mount()
-
-    start();
 
     
 </script>
