@@ -120,7 +120,6 @@
 </head>
 
 <body v-scope v-once>
-    <div><label>每个计算步骤等待的时间(毫秒)：</label>0<input id="animationDelay" type="range" min="0" max="1000" step="1" value="1" onchange="changeAnimationDelay(event)">1000<label id="progress"></label></div>
     <table v-for="(caculatorIds, index) in caculatorIdMatrix">
         <tr>
             <td class="caculator_cell">公式{{index+1}}：</td>
@@ -172,6 +171,7 @@
             <tr><td colspan="3"><button onclick="downloadPreTrainedModel(event)">下载预训练模型</button></td></tr>
             <tr><td colspan="3"><button onclick="downloadWeight(event)">下载模型</button></td></tr>
             <tr><td colspan="3"><label for="file">上传模型</label><input id="file" type="file" accept="application/json" onchange="uploadWeight(event)"></td></tr>
+            <tr><td colspan="3"><label id="progress">停止</label></td></tr>
             <tr>
                 <td colspan="2"><label for="trainTimes">次数：</label><input id="trainTimes" type="number" value="2000"></td>
                 <td><button onclick="train()">开始训练</button></td>
@@ -179,6 +179,13 @@
             <tr>
                 <td colspan="2"><button onclick="pauseTrain()">尽快暂停训练</button></td>
                 <td><button onclick="pauseTrain()">停止训练</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="playAnimation()">展示动画</button></td>
+                <td colspan="2"><button onclick="skipAnimation()">关闭动画极速运算</button></td>
+            </tr>
+            <tr>
+                <td colspan="3"><label>动画运行速度：</label><input id="animationDelay" type="range" min="0" max="1000" step="1" value="999" onchange="changeAnimationDelay(event)"></td>
             </tr>
             <tr><td colspan="3"><button onclick="test()">运行模型</button></td></tr>
         </table>
@@ -196,7 +203,15 @@ let trainTimes = 2000;
 let t = 0;
 let trainPaused = false;
 function changeAnimationDelay(e){
-    animationDelay = e.target.value;
+    animationDelay = 1000 - e.target.value;
+}
+function playAnimation(){
+    animationDelay = 1000;
+    setValue("animationDelay", 1000 - animationDelay)
+}
+function skipAnimation(){
+    animationDelay = 0;
+    setValue("animationDelay", 1000 - animationDelay)
 }
 const dataSet = [
     {
@@ -846,7 +861,10 @@ const layer0IdMatrix = [
             
         }
         const maxElement = document.getElementById(maxId);
-        maxElement.style.backgroundColor = "orange";
+        if(maxElement){
+            maxElement.style.backgroundColor = "orange";
+        } 
+        
     }
 
     async function getPredictValue(){
@@ -935,9 +953,9 @@ const layer0IdMatrix = [
                 const weight = JSON.parse(content);
                 try{
                     loadWeight(weight);
-                    confirm("权重加载成功");
+                    confirm("模型加载成功");
                 }catch(error){
-                    alert("权重加载失败")
+                    alert("模型加载失败")
                     reject("文件格式错误")
                 }
             };
@@ -969,6 +987,7 @@ const layer0IdMatrix = [
 
     async function train(){
         trainTimes = getValue("trainTimes");
+        trainPaused = false;
         const dataSet = getDataSet();
         // setValue(weight0_1IdMatrix[0][0], 1);
         // for(let i=0;i<1000;i++){
@@ -1016,6 +1035,7 @@ const layer0IdMatrix = [
                 await sleep(10);
             }
         }
+        setProgress("停止")
     }
 
     async function pauseTrain(){
@@ -1028,6 +1048,7 @@ const layer0IdMatrix = [
     }
 
     async function test(){
+        clearArrow();
         // 正向传播
         setProgress("测试中，正向推理中")
         await getDataFromScreen(screenIdMatrix);
@@ -1037,7 +1058,8 @@ const layer0IdMatrix = [
         clearArrow();
         const predictValue = await getPredictValue();
         lightUpMaxValue(labelIdMatrix);
-        clearArrow();
+        setProgress("运行结束，请查看预测结果")
+        confirm("预测结果是：" + predictValue)
     }
     
     async function sleep(ms){
