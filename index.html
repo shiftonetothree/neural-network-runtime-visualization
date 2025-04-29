@@ -114,7 +114,7 @@
 </head>
 
 <body v-scope v-once>
-    <div><label>每个计算步骤等待的时间(毫秒)：</label>0<input id="animationDelay" type="range" min="0" max="1000" step="1" value="1000" onchange="changeAnimationDelay(event)">1000<label id="progress"></label></div>
+    <div><label>每个计算步骤等待的时间(毫秒)：</label>0<input id="animationDelay" type="range" min="0" max="1000" step="1" value="100" onchange="changeAnimationDelay(event)">1000<label id="progress"></label></div>
     <table v-for="(caculatorIds, index) in caculatorIdMatrix">
         <tr>
             <td class="caculator_cell">公式{{index+1}}：</td>
@@ -170,7 +170,7 @@
 <script>
 
 const learnRate = 0.2;
-let animationDelay = 1000;
+let animationDelay = 100;
 function changeAnimationDelay(e){
     animationDelay = e.target.value;
 }
