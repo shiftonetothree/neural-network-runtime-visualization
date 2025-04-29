@@ -567,6 +567,7 @@ const layer0IdMatrix = [
         drawArrow(arrowIds[0],"orange",resultMatrixId, caculatorIdMatrix[0][0]);
         drawArrow(arrowIds[1],"orange",matrixIdA, caculatorIdMatrix[0][2]);
         drawArrow(arrowIds[2],"orange",matrixIdB, caculatorIdMatrix[0][4]);
+        drawArrow(arrowIds[3],"red",caculatorIdMatrix[0][6], resultMatrixId);
         await sleep(animationDelay);
     }
 
@@ -576,9 +577,9 @@ const layer0IdMatrix = [
         }
         const result = 1 / (1 + Math.exp(getValue(resultMatrixId)))
         setCaculator(1,["1 / (1 + " , "Math.exp(",getValue(resultMatrixId),") =",result]);
-        drawArrow(arrowIds[3],"orange",caculatorIdMatrix[0][6], caculatorIdMatrix[1][2]);
-        drawArrow(arrowIds[4],"red",caculatorIdMatrix[1][4], resultMatrixId)
-        await sleep(animationDelay);
+        drawArrow(arrowIds[1],"orange", resultMatrixId, caculatorIdMatrix[1][2]);
+        drawArrow(arrowIds[2],"red",caculatorIdMatrix[1][4], resultMatrixId)
+        await sleep(animationDelay * 10);
     }
 
     async function playOutputDeltaFunction‌Animation(outputId, labelId, outputDeltaId){
@@ -659,9 +660,11 @@ const layer0IdMatrix = [
                     const newValue = getValue(resultMatrixId) + getValue(matrixIdA) * getValue(matrixIdB)
                     setValue(resultMatrixId, newValue);
                 }
+                clearArrow();
                 await playActivationFunction‌Animation(resultMatrixId);
                 const newValueAfterActivation = 1 / (1 + Math.exp(-1 * getValue(resultMatrixId)));
                 setValue(resultMatrixId, newValueAfterActivation);
+                clearArrow();
             }
         }
     }
