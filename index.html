@@ -174,7 +174,7 @@
                 <th :colspan="maxColumnCount">隐藏层2到输出层的权重</th>
                 <th>输出层</th>
                 <th>损失</th>
-                <th>结果</th>
+                <th>参考</th>
             </tr>
             <tr v-for="(row,index) in weight2_3IdMatrix">
                 <td v-if="index == 0" :colspan="maxColumnCount - row.length" :rowspan="weight2_3IdMatrix.length"></td>
