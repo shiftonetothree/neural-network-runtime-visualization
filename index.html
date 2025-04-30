@@ -551,6 +551,22 @@ const layer0IdMatrix = [
         }
         
     }
+    function refreshWeightBackground(weightIdMatrix){
+        for (let i=0;i<weightIdMatrix.length;i++){
+            const row = weightIdMatrix[i];
+            for(let j=0;j<row.length;j++){
+                const weightId = row[j];
+                setMatirxBackgroundByValue(weightId,getValue(weightId))
+            }
+        }
+    }
+    function setMatirxBackgroundByValue(id, value){
+        const element = document.getElementById(id);
+        if(element.className.indexOf("matrix") >= 0 && element.className.indexOf("weight") >= 0){
+            const gray = (-value - 10) * 255 / 20 + 255;
+            element.style.backgroundColor = "rgba("+ gray + "," + gray + "," + gray + ")";
+        }
+    }
     function setValue(id, value) {
         // if(id == "weight0_1_0_0"){
         //     debugger
@@ -558,17 +574,16 @@ const layer0IdMatrix = [
         // console.log("setValue id", id)
         const element = document.getElementById(id);
         if(animationDelay != 0){
-            if(element.className.indexOf("matrix") >= 0 && element.className.indexOf("weight") >= 0){
-                const gray = (-value - 10) * 255 / 20 + 255;
-                element.style.backgroundColor = "rgba("+ gray + "," + gray + "," + gray + ")";
-            }
+            setMatirxBackgroundByValue(id, value)
         }
         if (element.className.indexOf("caculator_cell")>=0){
             element.innerText = value;
         }else if(element.type == "checkbox"){
-            return element.checked = value;
+            element.checked = value;
+            return;
         }else{
-            return element.value = value;
+            element.value = value;
+            return;
         }
         
     }
@@ -905,10 +920,10 @@ const layer0IdMatrix = [
         return maxIndex;
     }
 
-    function getMatrixData(matrixId){
+    function getMatrixData(idMatrix){
         const matrix = [];
-        for(let i=0;i<matrixId.length;i++){
-            const row = matrixId[i];
+        for(let i=0;i<idMatrix.length;i++){
+            const row = idMatrix[i];
             const rowData = [];
             for(let j=0;j<row.length;j++){
                 const id = row[j];
@@ -920,9 +935,9 @@ const layer0IdMatrix = [
         return matrix
     }
 
-    function setMatrixData(matrixId, data){
-        for(let i=0;i<matrixId.length;i++){
-            const row = matrixId[i];
+    function setMatrixData(idMatrix, data){
+        for(let i=0;i<idMatrix.length;i++){
+            const row = idMatrix[i];
             for(let j=0;j<row.length;j++){
                 const id = row[j];
                 const value = data[i][j];
@@ -931,15 +946,16 @@ const layer0IdMatrix = [
         }
     }
 
-    function setMatrixToRandomNumber(matrixId){
-        for(let i=0;i<matrixId.length;i++){
-            const row = matrixId[i];
+    function setMatrixToRandomNumber(idMatrix){
+        for(let i=0;i<idMatrix.length;i++){
+            const row = idMatrix[i];
             for(let j=0;j<row.length;j++){
                 const id = row[j];
                 const value = Math.random() - 0.5;
                 setValue(id, value);
             }
         }
+        refreshWeightBackground(weight0_1IdMatrix)
     }
 
     function downloadPreTrainedModel(){
@@ -1070,6 +1086,11 @@ const layer0IdMatrix = [
             // await sleep(animationDelay);
             if(t % 10 == 0){
                 console.log("第" + t + "次训练完成", new Date());
+                if(animationDelay == 0){
+                    refreshWeightBackground(weight0_1IdMatrix);
+                    refreshWeightBackground(weight1_2IdMatrix);
+                    refreshWeightBackground(weight2_3IdMatrix);
+                }
                 await sleep(10);
             }
         }
