@@ -186,6 +186,9 @@
                 <td colspan="2"><button onclick="skipAnimation()">关闭动画极速运算</button></td>
             </tr>
             <tr>
+                <td colspan="3"><button onclick="topSpeedAnimation()">以最快的速度播放动画</button></td>
+            </tr>
+            <tr>
                 <td colspan="3"><label>动画运行速度：</label><input id="animationDelay" type="range" min="0" max="1000" step="1" value="999" onchange="changeAnimationDelay(event)"></td>
             </tr>
             <tr><td colspan="3"><button onclick="test()">运行模型</button></td></tr>
@@ -214,6 +217,10 @@ function playAnimation(){
 }
 function skipAnimation(){
     animationDelay = 0;
+    setValue("animationDelay", 1000 - animationDelay)
+}
+function topSpeedAnimation(){
+    animationDelay = 1;
     setValue("animationDelay", 1000 - animationDelay)
 }
 const dataSet = [
