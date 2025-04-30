@@ -171,6 +171,7 @@
             <tr><td><label>正确率：</label></td><td colspan="2"><label id="accuracy"></label></td></tr>
             <tr><td colspan="3"><button onclick="downloadWeight(event)">下载模型</button></td></tr>
             <tr><td colspan="3"><label for="file">上传模型</label><input id="file" type="file" accept="application/json" onchange="uploadWeight(event)"></td></tr>
+            <tr><td colspan="3"><button onclick="clearWeight()">清除模型</button></td></tr>
             <tr><td colspan="3"><label id="progress">停止</label></td></tr>
             <tr>
                 <td colspan="2"><label for="trainTimes">次数：</label><input id="trainTimes" type="number" value="2000"></td>
@@ -202,7 +203,8 @@ const learnRate = 0.2;
 let animationDelay = 1;
 let trainTimes = 2000;
 let t = 0;
-let trainPaused = false;
+/** 线程锁，只允许单线程运行 */
+let readyToRun = true;
 function changeAnimationDelay(e){
     animationDelay = 1000 - e.target.value;
 }
@@ -757,7 +759,7 @@ const layer0IdMatrix = [
         }
     }
 
-    async function getDataFromScreen(screenIdMatrix){
+    async function getDataFromScreen(layer0IdMatrix, screenIdMatrix){
         let m = 0;
         const data = [];
         for(let i = 0; i < screenIdMatrix.length; i++){
@@ -774,14 +776,14 @@ const layer0IdMatrix = [
         }
     }
 
-    async function putTrainDataToMatrix(data, labelMatrix){
+    async function putTrainDataToMatrix(data, labelMatrix, labelIdMatrix, layer0IdMatrix, screenIdMatrix){
         let m = 0;
         for(let i = 0; i < data.length; i++){
             const row = data[i];
             for(let j = 0; j< row.length; j++){
                 const value = row[j];
                 const layer0Id = layer0IdMatrix[m][0];
-                await playPutTrainDataToMatrix(i,j,layer0Id);
+                await playPutTrainDataToMatrix(layer0Id, screenIdMatrix[i][j]);
                 setValue(layer0Id, value);
                 m++;
             }
@@ -789,7 +791,7 @@ const layer0IdMatrix = [
         }
         for(let i = 0; i < labelMatrix.length; i++){
             const value = labelMatrix[i];
-            const labelMatrixId = "label_" + i + "_0";
+            const labelMatrixId = labelIdMatrix[i];
             setValue(labelMatrixId, value);
         }
     }
@@ -919,7 +921,18 @@ const layer0IdMatrix = [
                 const value = data[i][j];
                 setValue(id, value);
             }
-        }   
+        }
+    }
+
+    function setMatrixToRandomNumber(matrixId){
+        for(let i=0;i<matrixId.length;i++){
+            const row = matrixId[i];
+            for(let j=0;j<row.length;j++){
+                const id = row[j];
+                const value = Math.random() - 0.5;
+                setValue(id, value);
+            }
+        }
     }
 
     function downloadPreTrainedModel(){
@@ -931,6 +944,12 @@ const layer0IdMatrix = [
             weight1_2,
             weight2_3
         })); 
+    }
+
+    function clearWeight() {
+        setMatrixToRandomNumber(weight0_1IdMatrix)
+        setMatrixToRandomNumber(weight1_2IdMatrix)
+        setMatrixToRandomNumber(weight2_3IdMatrix)
     }
 
     function downloadWeight(){
@@ -994,7 +1013,11 @@ const layer0IdMatrix = [
 
     async function train(){
         trainTimes = getValue("trainTimes");
-        trainPaused = false;
+        if(readyToRun == false){
+            alert("已经正在运行");
+            return;
+        }
+        readyToRun = false;
         const dataSet = getDataSet();
         // setValue(weight0_1IdMatrix[0][0], 1);
         // for(let i=0;i<1000;i++){
@@ -1003,19 +1026,20 @@ const layer0IdMatrix = [
         // console.log("weight0_1IdMatrix[0][0]",getValue(weight0_1IdMatrix[0][0]))
         // 训练
         for(; t < trainTimes; t++){
-            if(trainPaused){
+            if(readyToRun){
+                alert("已暂停训练")
                 break;
             }
             let accurate = 0;
             for(let i = 0; i < dataSet.length; i++){
-                if(trainPaused){
+                if(readyToRun){
                     break;
                 }
                 const item = dataSet[i];
                 putDataToScreen(item.data, item.label, screenIdMatrix);
                 // 正向传播
                 setProgress("训练进度"+t+"/"+trainTimes+"，正向推理中")
-                await putTrainDataToMatrix(item.data, item.labelMatrix);
+                await putTrainDataToMatrix(item.data, item.labelMatrix, labelIdMatrix, layer0IdMatrix, screenIdMatrix);
                 await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
                 await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
                 await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
@@ -1047,19 +1071,26 @@ const layer0IdMatrix = [
     }
 
     async function pauseTrain(){
-        trainPaused = true;
+        readyToRun = true;
+        alert("正在暂停训练，请稍等");
     }
 
     async function stopTrain(){
-        trainPaused = true;
+        readyToRun = true;
         t = 0;
+        alert("正在暂停训练，请稍等");
     }
 
     async function test(){
+        if(!readyToRun){
+            alert("已经在运行，请等待结果");
+            return;
+        }
+        readyToRun = false;
         clearArrow();
         // 正向传播
         setProgress("测试中，正向推理中")
-        await getDataFromScreen(screenIdMatrix);
+        await getDataFromScreen(layer0IdMatrix,screenIdMatrix);
         await sigmodMatrixCross(weight0_1IdMatrix, layer0IdMatrix, layer1IdMatrix);
         await sigmodMatrixCross(weight1_2IdMatrix, layer1IdMatrix, layer2IdMatrix);
         await sigmodMatrixCross(weight2_3IdMatrix, layer2IdMatrix, layer3IdMatrix);
@@ -1068,6 +1099,7 @@ const layer0IdMatrix = [
         lightUpMaxValue(labelIdMatrix);
         setProgress("运行结束，请查看预测结果")
         confirm("预测结果是：" + predictValue)
+        readyToRun = true;
     }
     
     async function sleep(ms){
