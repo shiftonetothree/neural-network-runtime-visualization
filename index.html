@@ -686,11 +686,11 @@ const layer0IdMatrix = [
         await sleep(animationDelay * 100);
     }
 
-    async function playPutTrainDataToMatrix(i,j,layerId){
+    async function playPutTrainDataToMatrix(layerId, screenId){
         if(animationDelay == 0){
             return;
         }
-        drawArrow(arrowIds[0],"red", "screen_"+i+"_"+j, layerId);
+        drawArrow(arrowIds[0],"red", screenId, layerId);
         await sleep(animationDelay)
     }
 
@@ -760,7 +760,7 @@ const layer0IdMatrix = [
                 const layer0Id = layer0IdMatrix[m][0];
                 const booleanValue = getValue(id);
                 const value = booleanValue ? 1 : 0;
-                await playPutTrainDataToMatrix(i,j,layer0Id);
+                await playPutTrainDataToMatrix(layer0Id, screenIdMatrix[i][j]);
                 setValue(layer0Id, value);
                 m++;
             }
