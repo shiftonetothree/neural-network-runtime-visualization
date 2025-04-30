@@ -19,6 +19,7 @@
         .matrix {
             width: 33px;
             height: 15px;
+            border: none;
         }
 
         table {
@@ -547,6 +548,12 @@ const layer0IdMatrix = [
         // }
         // console.log("setValue id", id)
         const element = document.getElementById(id);
+        if(animationDelay != 0){
+            if(element.className.indexOf("matrix") >= 0 && element.className.indexOf("weight") >= 0){
+                const gray = (-value - 10) * 255 / 20 + 255;
+                element.style.backgroundColor = "rgba("+ gray + "," + gray + "," + gray + ")";
+            }
+        }
         if (element.className.indexOf("caculator_cell")>=0){
             element.innerText = value;
         }else if(element.type == "checkbox"){
