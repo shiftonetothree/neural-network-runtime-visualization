@@ -129,6 +129,9 @@
         .main-button{
             background-color: rgb(166, 255, 0);
         }
+        .second-button{
+            background-color: rgb(241, 255, 215);
+        }
     </style>
 </head>
 
@@ -210,11 +213,11 @@
                 <td><button onclick="pauseTrain()">停止训练</button></td>
             </tr>
             <tr>
-                <td><button onclick="playAnimation()">展示动画</button></td>
+                <td><button onclick="playAnimation()">让动画慢</button></td>
                 <td colspan="2"><button onclick="skipAnimation()">关闭动画极速运算</button></td>
             </tr>
             <tr>
-                <td colspan="3"><button onclick="topSpeedAnimation()">以最快的速度播放动画</button></td>
+                <td colspan="3"><button class="second-button" onclick="topSpeedAnimation()">动画太慢着急看结果？点我以最快的速度播放动画</button></td>
             </tr>
             <tr>
                 <td colspan="3"><label>动画速度：</label><input id="animationDelay" type="range" min="0" max="1000" step="1" value="0" onchange="changeAnimationDelay(event)"></td>
