@@ -212,7 +212,7 @@
                 <td colspan="3"><button onclick="topSpeedAnimation()">以最快的速度播放动画</button></td>
             </tr>
             <tr>
-                <td colspan="3"><label>动画速度：</label><input id="animationDelay" type="range" min="0" max="1000" step="1" value="999" onchange="changeAnimationDelay(event)"></td>
+                <td colspan="3"><label>动画速度：</label><input id="animationDelay" type="range" min="0" max="1000" step="1" value="0" onchange="changeAnimationDelay(event)"></td>
             </tr>
             <tr><td colspan="3"><button onclick="test()">运行模型</button></td></tr>
         </table>
@@ -226,7 +226,7 @@
 <script>
 
 const learnRate = 0.2;
-let animationDelay = 1;
+let animationDelay = 1000;
 let trainTimes = 2000;
 let t = 0;
 /** 线程锁，只允许单线程运行 */
