@@ -187,8 +187,8 @@
         </table>
         <table class="screen_table">
             <tr><td colspan="3">图像输入板，通过点击修改图像，请修改成一个像阿拉伯数字的图像：</td></tr>
-            <tr v-for="row in screenIdMatrix">
-                <td v-for="id in row"><input :id="id" class="screen" type="checkbox"></td>
+            <tr v-for="(row, rowIndex) in screenIdMatrix">
+                <td v-for="(id, columnIndex) in row"><input :id="id" class="screen" type="checkbox" :checked="screenInitialMatrix[rowIndex][columnIndex]"></td>
             </tr>
             <tr><td><label>预测值：</label></td><td colspan="2"><label id="predict"></label></td></tr>
             <tr><td><label>正确率：</label></td><td colspan="2"><label id="accuracy"></label></td></tr>
@@ -386,6 +386,14 @@ const screenIdMatrix = [
     ["screen_2_0", "screen_2_1", "screen_2_3"],
     ["screen_3_0", "screen_3_1", "screen_3_3"],
     ["screen_4_0", "screen_4_1", "screen_4_3"],
+]
+
+const screenInitialMatrix = [
+    [false, true, false],
+    [true, true, false],
+    [false, true, false],
+    [false, true, false],
+    [true, true, true],
 ]
 
 const layer0IdMatrix = [
@@ -1189,6 +1197,8 @@ const layer0IdMatrix = [
 
     PetiteVue.createApp(
         {
+            screenIdMatrix: screenIdMatrix,
+            screenInitialMatrix: screenInitialMatrix,
             layer0IdMatrix : layer0IdMatrix,
             weight0_1IdMatrix : weight0_1IdMatrix,
             layer1IdMatrix : layer1IdMatrix,
