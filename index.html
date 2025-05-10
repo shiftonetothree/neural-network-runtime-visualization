@@ -192,7 +192,7 @@
             </tr>
         </table>
         <table class="screen_table">
-            <tr><td colspan="3">图像输入板，通过点击修改图像，请修改成一个像阿拉伯数字的图像：</td></tr>
+            <tr><td colspan="3" class="main-button">图像输入板，请点击下面的格子改变格子颜色，使得颜色组成的图形像一个阿拉伯数字：</td></tr>
             <tr v-for="(row, rowIndex) in screenIdMatrix">
                 <td v-for="(id, columnIndex) in row"><input :id="id" class="screen" type="checkbox" :checked="screenInitialMatrix[rowIndex][columnIndex]"></td>
             </tr>
