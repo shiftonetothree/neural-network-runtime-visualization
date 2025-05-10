@@ -696,7 +696,7 @@ const layer0IdMatrix = [
         setCaculator(1,["1 / (1 + " , "Math.exp(",getValue(resultMatrixId),") =",result]);
         drawArrow(arrowIds[1],"orange", resultMatrixId, caculatorIdMatrix[1][2]);
         drawArrow(arrowIds[2],"red",caculatorIdMatrix[1][4], resultMatrixId)
-        await sleep(animationDelay * 10);
+        await sleep(animationDelay * 3);
     }
 
     async function playOutputDeltaFunction‌Animation(outputId, labelId, outputDeltaId){
@@ -753,7 +753,7 @@ const layer0IdMatrix = [
             return;
         }
         drawArrow(arrowIds[0],"red", layer3Id, "predict");
-        await sleep(animationDelay * 100);
+        await sleep(animationDelay * 30);
     }
 
     async function playPutTrainDataToMatrix(layerId, screenId){
