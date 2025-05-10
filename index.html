@@ -193,7 +193,7 @@
             <tr v-for="(row, rowIndex) in screenIdMatrix">
                 <td v-for="(id, columnIndex) in row"><input :id="id" class="screen" type="checkbox" :checked="screenInitialMatrix[rowIndex][columnIndex]"></td>
             </tr>
-            <tr><td colspan="3"><button class="main-button" onclick="test()">点击我用模型推理上图的数字</button></td></tr>
+            <tr><td colspan="3"><button class="main-button" onclick="test()">点击我用模型推测上面数字是几</button></td></tr>
             <tr><td><label>预测值：</label></td><td colspan="2"><label id="predict"></label></td></tr>
             <tr><td><label>正确率：</label></td><td colspan="2"><label id="accuracy"></label></td></tr>
             <tr><td colspan="3"><button onclick="downloadWeight(event)">下载模型</button></td></tr>
